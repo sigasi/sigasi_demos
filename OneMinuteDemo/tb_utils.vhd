@@ -6,6 +6,8 @@ entity tb_utils is
 	port(
 		clk   : out std_logic;
 		rst   : out std_logic;
+		--dataI : in  unsigned := (others => '0');
+		--dataO : out unsigned;
 		start : out std_logic
 	);
 end entity tb_utils;
@@ -36,5 +38,12 @@ begin
 			end if;
 		end if;
 	end process p_startTrigger;
+
+--	p_processData : process(clk) is
+--	begin
+--		if rising_edge(clk) then
+--			dataO <= dataI;
+--		end if;
+--	end process p_processData;
 
 end architecture RTL;

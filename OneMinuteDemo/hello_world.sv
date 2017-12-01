@@ -29,8 +29,6 @@ module hello_world;
 
 `ifndef NO_RAND
   rand
-//`else
-//  rand
 `endif
   int addr;
 
@@ -40,10 +38,9 @@ module hello_world;
 
   constraint c { addr >= 0 && addr < 'h100; }
 
-
   function new(string name="packet");
-     super.new(name);
-  endfunction
+  	super.new(name);
+  endfunction;
 
 	endclass
   
