@@ -4,7 +4,6 @@ use ieee.numeric_std.all;
 use work.constants.all;
 
 entity testbench is
-	generic(half_iterations : integer := 50);
 end entity testbench;
 
 architecture STR of testbench is
@@ -16,7 +15,7 @@ architecture STR of testbench is
 	signal rst      : std_logic;
 
 begin
-	
+
 	tb_utils_instance : entity work.tb_utils
 		port map(
 			clk   => clk,
@@ -39,7 +38,9 @@ begin
 			clk      => clk,
 			rst      => rst
 		);
-		
-		assert valid = '0' or data_out = 0;
+
+	assert valid = '0' or data_out = 0;
+
+	data_in <= (others => '1');
 
 end architecture STR;
