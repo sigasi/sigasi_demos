@@ -33,7 +33,7 @@ begin
 		port map(
 			data_out => data_out,
 			data_in  => data_in,
-			valid    => valid,
+--			valid    => valid,
 			start    => start,
 			clk      => clk,
 			rst      => rst
@@ -42,5 +42,6 @@ begin
 	assert valid = '0' or data_out = 0;
 
 	data_in <= (others => '1');
+	valid   <= start;
 
 end architecture STR;

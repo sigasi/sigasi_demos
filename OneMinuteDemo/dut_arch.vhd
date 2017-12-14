@@ -11,7 +11,7 @@ begin
 		if rst = '1' then
 			state  := idle;
 			count  <= 0;
-			valid  <= '0';
+--			valid  <= '0';
 			result <= (others => '0');
 		elsif rising_edge(clk) then
 			case state is
@@ -20,7 +20,7 @@ begin
 						count <= 0;
 						state := preparing;
 					end if;
-					valid  <= '0';
+--					valid  <= '0';
 					result <= (2 => '1', others => '0');
 				when preparing =>
 					state := running;
@@ -32,7 +32,7 @@ begin
 					count <= count + 1;
 				when ready =>
 					data_out <= result;
-					valid    <= '1';
+--					valid    <= '1';
 					state    := idle;
 			end case;
 		end if;
