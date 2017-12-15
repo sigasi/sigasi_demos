@@ -10,10 +10,6 @@
 -- external compiler too.
 --------------------------------------------------------------------------------
 
-library ieee;
-use IEEE.std_logic_1164.all;
-use ieee.numeric_std.all;
-use work.constants.all;
 
 --------------------------------------------------------------------------------
 -- "External simulation": Before you can run a simulation, you need to set
@@ -21,5 +17,3 @@ use work.constants.all;
 -- Step 1 : Right click on `testbench` and select **Set as Top Level**
 -- Step 2 : In the **Hierarchy View**, click the **Start Simulation** button.
 --------------------------------------------------------------------------------
-entity testbench is
-end entity testbench;

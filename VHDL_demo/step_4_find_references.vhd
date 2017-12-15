@@ -10,6 +10,10 @@ package constants is
 
 	constant MAGIC_NUMNER : std_logic_vector(15 downto 0) := X"da01";
 
+	constant DATA_D : std_logic_vector(7 downto 0) := X"42";
+
+	constant FSM_RQ : std_logic_vector(4 downto 0) := b"01101";
+
 	--------------------------------------------------------------------------------
 	-- If you got here by using the "declare as enumertion literal" quickfix: 
 	-- 

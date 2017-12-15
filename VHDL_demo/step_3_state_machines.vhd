@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-entity dut is
+entity bar is
 	--------------------------------------------------------------------------------
 	-- If you arrived here via "Open Declaration", you can navigate back to your
 	-- previous location, just like in your webbrowser, by pressing **ALT+LEFT** or
@@ -20,10 +20,10 @@ entity dut is
 		clk      : in  std_logic;
 		rst      : in  std_logic
 	);
-end entity dut;                         -- entity dut
+end entity bar;
 
 use work.constants.all;
-architecture RTL of dut is
+architecture RTL of bar is
 	signal count  : integer range 0 to MAX_COUNT;
 	signal result : unsigned(7 downto 0);
 begin

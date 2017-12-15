@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-entity demo is
+entity dut is
 	generic(
 		reset_value : std_logic := '1'
 	);
@@ -13,9 +13,9 @@ entity demo is
 		clk      : in  std_logic;
 		rst      : in  std_logic
 	);
-end entity demo;
+end entity dut;
 
-architecture RTL of demo is
+architecture RTL of dut is
 	signal a : std_logic;
 	signal b : integer;
 
@@ -33,7 +33,7 @@ begin
 			b <= 5;
 			c := "test";
 			d := "1001";
-			e := "1000" & "test";
+			e := "1000" & "test"; -- Sigasi Studio won't figure out this datatype.
 
 			if a = '1' and b = 5 and c = "start" then
 				c        := e;

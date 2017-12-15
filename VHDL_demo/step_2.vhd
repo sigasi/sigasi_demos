@@ -1,3 +1,14 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+use work.constants.all;
+
+library my_lib;
+
+entity testbench is
+end entity testbench;
+
 architecture STR of testbench is
 	signal data_out     : unsigned(7 downto 0);
 	signal data_in      : unsigned(7 downto 0);
@@ -11,15 +22,14 @@ architecture STR of testbench is
 	-- Go ahead and hover over other things too!
 	----------------------------------------------------------------------
 	constant iterations : integer := MAX_COUNT - 4;
-	constant CLK_PERIOD : time    := 50 ns;
 
 begin
 	----------------------------------------------------------------------
 	-- "Open declaration": in the line below, place your cursor on
-	-- the word "dut" and press "F3". This takes you to the declaration of 
-	-- the entity "dut". 
+	-- the word "bar" and press "F3". This takes you to the declaration of 
+	-- the entity "bar". 
 	----------------------------------------------------------------------
-	dut_instance : entity work.dut(RTL)
+	bar_instance : entity work.bar(RTL)
 		generic map(
 			iterations => iterations
 		)
@@ -34,37 +44,13 @@ begin
 
 	assert valid = '0' or data_out /= "00000000";
 
-	CLOCK_DRIVER : process is
-	begin
-		clk <= '0';
-		wait for CLK_PERIOD / 2;
-		clk <= '1';
-		wait for CLK_PERIOD / 2;
-	end process CLOCK_DRIVER;
-
-	RST_CTRL : process is
-	begin
-		rst <= '0';
-		wait for CLK_PERIOD * 2;
-		rst <= '1';
-		wait for CLK_PERIOD * 8;
-		rst <= '0';
-	end process RST_CTRL;
-
-	START_CTRL : process is
-	begin
-		start <= '0';
-		wait for CLK_PERIOD * 128;
-		start <= '1';
-		wait for CLK_PERIOD * 5;
-		start <= '0';
-	end process START_CTRL;
-
-	DATA_DELAY : process(clk) is
-	begin
-		if rising_edge(clk) then
-			data_in <= data_out;
-		end if;
-	end process DATA_DELAY;
+	controller_instance : entity my_lib.test_controller
+		port map(
+			clk   => clk,
+			rst   => rst,
+			start => start,
+			di    => data_out,
+			do    => data_in
+		);
 
 end architecture STR;
