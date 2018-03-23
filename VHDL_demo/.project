@@ -24,17 +24,17 @@
 		<link>
 			<name>Common Libraries/IEEE</name>
 			<type>2</type>
-			<locationURI>sigasiresource:/vhdl/93/IEEE</locationURI>
+			<locationURI>sigasiresource:/vhdl/2008/IEEE</locationURI>
 		</link>
 		<link>
 			<name>Common Libraries/IEEE Synopsys</name>
 			<type>2</type>
-			<locationURI>sigasiresource:/vhdl/93/IEEE%20Synopsys</locationURI>
+			<locationURI>sigasiresource:/vhdl/2008/IEEE%20Synopsys</locationURI>
 		</link>
 		<link>
 			<name>Common Libraries/STD</name>
 			<type>2</type>
-			<locationURI>sigasiresource:/vhdl/93/STD</locationURI>
+			<locationURI>sigasiresource:/vhdl/2008/STD</locationURI>
 		</link>
 		<link>
 			<name>Common Libraries/readme.txt</name>
