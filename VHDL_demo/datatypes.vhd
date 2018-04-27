@@ -13,21 +13,21 @@ architecture RTL of datatypes is
 	end function f;
 
 	signal a : integer;
-	signal b : bit := 6;
+	signal b : bit := '1';
 
 begin
-	a <= '1';
-	b <= 2;
-	a <= f(1);
-	b <= f('1');
-	a <= b;
+	a <= 5;
+	b <= '1';
+	a <= f('1');
+	b <= f(6);
+	a <= f(b);
 
 	p_p : process is
-		variable v : integer := '1';
+		variable v : integer := 5;
 		variable w : bit;
 	begin
-		v := '1';
-		w := 6;
+		v := 5;
+		w := '0';
 	end process p_p;
 
 end architecture RTL;
