@@ -3,12 +3,6 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 entity bar is
-	--------------------------------------------------------------------------------
-	-- If you arrived here via "Open Declaration", you can navigate back to your
-	-- previous location, just like in your webbrowser, by pressing **ALT+LEFT** or
-	-- by clicking the yellow left pointing arrow in the toolbar.
-	-- Next, navigate back here with **ALT+RIGHT** and scroll to the next.
-	--------------------------------------------------------------------------------
 	generic(
 		iterations : integer := 10
 	);
@@ -29,13 +23,6 @@ architecture RTL of bar is
 begin
 	assert iterations <= MAX_COUNT;
 
-	--------------------------------------------------------------------------------
-	-- "Quickfix": Some VHDL problems can be automatically resolved with 
-	-- quickfixes. These problems have markers annotated with a lightbulb icon, like
-	-- the *sensitivity list* problem below.
-	-- trigger a quickfix, click the problem marker (or press **Ctrl+1**) and select
-	-- the quickfix.
-	--------------------------------------------------------------------------------
 	COUNTER : process(clk, rst) is
 		variable state : fsm_t;
 	begin
@@ -45,11 +32,6 @@ begin
 			valid  <= '0';
 			result <= (others => '0');
 		elsif rising_edge(clk) then
-			--------------------------------------------------------------------------------
-			-- "Missing choices": The line below has an error because not all choices
-			-- of the enumeration type "state_t" are covered.
-			-- Click on the lightbulb icon to the left of the line to add the missing choices
-			--------------------------------------------------------------------------------
 			case state is
 				when idle =>
 					if start = '1' then
@@ -66,12 +48,6 @@ begin
 						result <= resize(result * data_in, result'length);
 					end if;
 					count <= count + 1;
-				--------------------------------------------------------------------------------
-				-- "declare new enumeration literal": The line below has an error because
-				-- there is no state called "almost_ready" in the enumeration datatype "state_t".
-				-- Click on the lightbulb icon to the left of the line and select
-				--  "Declare as new enumeration literal"
-				--------------------------------------------------------------------------------
 				when almost_ready =>
 					state := ready;
 				when ready =>
