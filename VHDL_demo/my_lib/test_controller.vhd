@@ -14,13 +14,14 @@ end entity test_controller;
 
 architecture RTL of test_controller is
 	constant CLK_PERIOD : time := 50 ns;
+	signal clk_int      : std_logic;
 begin
 
 	CLOCK_DRIVER : process is
 	begin
-		clk <= '0';
+		clk_int <= '0';
 		wait for CLK_PERIOD / 2;
-		clk <= '1';
+		clk_int <= '1';
 		wait for CLK_PERIOD / 2;
 	end process CLOCK_DRIVER;
 
@@ -42,11 +43,13 @@ begin
 		start <= '0';
 	end process START_CTRL;
 
-	DATA_DELAY : process(clk) is
+	DATA_DELAY : process(clk_int) is
 	begin
-		if rising_edge(clk) then
+		if rising_edge(clk_int) then
 			do <= di;
 		end if;
 	end process DATA_DELAY;
+
+	clk <= clk_int;
 
 end architecture RTL;
