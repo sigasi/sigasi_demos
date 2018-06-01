@@ -31,6 +31,7 @@ begin
 	----------------------------------------------------------------------
 	bar_instance : entity work.bar(RTL)
 		generic map(
+			datawidth  => 8,
 			iterations => iterations
 		)
 		port map(
