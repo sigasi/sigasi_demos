@@ -27,6 +27,6 @@ module dut #(iters = `double(10)) (
         begin
             $display("Loop pass");
         end
-    end
+    and
 
 endmodule : dut
