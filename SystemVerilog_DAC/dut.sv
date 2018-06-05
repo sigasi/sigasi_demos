@@ -2,9 +2,7 @@
 `define max(a,b) ((a)>(b)?(a):(b))
 
 module dut #(iters = `double(10)) (
-        input logic d_in,
-        input logic clk,
-        input logic rst,
+        input logic d_in, clk, rst,
         output logic d_out
     );
 
@@ -14,7 +12,7 @@ module dut #(iters = `double(10)) (
     // TODO: rename
     logic local_value = `max(0);
 
-    always @(posedge clk) begin
+    always_ff @(posedge clk) begin
         if (rst)
             local_value <= 0;
         else begin
@@ -23,7 +21,7 @@ module dut #(iters = `double(10)) (
         d_out <= local_value;
     end
 
-    always @(posedge rst) begin
+    always_ff @(posedge rst) begin
         $display(MSG);
         for (int i=0; i<iters; i=i+1);
         begin
