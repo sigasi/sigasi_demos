@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.sigasi.hdt.shared.librarymapping.model:LibraryMappings xmlns:com.sigasi.hdt.shared.librarymapping.model="com.sigasi.hdt.vhdl.scoping.librarymapping" Version="2">
+  <Mappings Location="Common Libraries/IEEE" Library="ieee"/>
+  <Mappings Location="Common Libraries/IEEE Synopsys" Library="ieee"/>
+  <Mappings Location="Common Libraries" Library="not mapped"/>
+  <Mappings Location="ips/adv_dbg_if/doc" Library="not mapped"/>
+  <Mappings Location="ips/apb/apb_event_unit/include" Library="not mapped"/>
+  <Mappings Location="ips/apb/apb_uart_sv/uart_interrupt.sv" Library="not mapped"/>
+  <Mappings Location="ips/fpu/document" Library="not mapped"/>
+  <Mappings Location="ips/fpu/hdl/modelsim_div_sqrt" Library="not mapped"/>
+  <Mappings Location="ips/riscv/ci" Library="not mapped"/>
+  <Mappings Location="ips/riscv/doc" Library="not mapped"/>
+  <Mappings Location="ips/riscv/include" Library="not mapped"/>
+  <Mappings Location="ips/riscv/tb/serDiv/scripts" Library="not mapped"/>
+  <Mappings Location="ips/zero-riscy/ci" Library="not mapped"/>
+  <Mappings Location="ips/zero-riscy/include" Library="not mapped"/>
+  <Mappings Location="rtl/includes" Library="not mapped"/>
+  <Mappings Location="tb/jtag_dpi" Library="not mapped"/>
+  <Mappings Location="tb/mem_dpi" Library="not mapped"/>
+  <Mappings Location="Common Libraries/STD" Library="std"/>
+  <Mappings Location="" Library="work"/>
+  <Mappings Location="ips/riscv/include/apu_core_package.sv" Library="work"/>
+  <Mappings Location="ips/riscv/include/apu_macros.sv" Library="work"/>
+  <Mappings Location="ips/riscv/include/riscv_defines.sv" Library="work"/>
+  <Mappings Location="ips/riscv/include/riscv_tracer_defines.sv" Library="work"/>
+  <Mappings Location="ips/zero-riscy/include/zeroriscy_defines.sv" Library="work"/>
+  <Mappings Location="ips/zero-riscy/include/zeroriscy_tracer_defines.sv" Library="work"/>
+</com.sigasi.hdt.shared.librarymapping.model:LibraryMappings>
