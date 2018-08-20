@@ -31,7 +31,6 @@ begin
 	----------------------------------------------------------------------
 	bar_instance : entity work.bar(RTL)
 		generic map(
-			datawidth  => 8,
 			iterations => iterations
 		)
 		port map(
@@ -47,11 +46,11 @@ begin
 
 	controller_instance : entity my_lib.test_controller
 		port map(
-			clk   => clk,
-			rst   => rst,
-			start => start,
-			di    => data_out,
-			do    => data_in
+			clk      => clk,
+			rst      => rst,
+			start    => start,
+			data_out => data_out,
+			data_in  => data_in
 		);
 
 end architecture STR;
