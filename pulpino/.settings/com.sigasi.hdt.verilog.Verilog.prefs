@@ -1,0 +1,2 @@
+eclipse.preferences.version=1
+includePath=ips/apb/apb_event_unit/include;ips/riscv/include;ips/zero-riscy/include;rtl/includes

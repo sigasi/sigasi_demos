@@ -1,0 +1,4 @@
+core2axi:
+  files: [
+    core2axi.sv,
+  ]
