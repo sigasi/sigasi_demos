@@ -5,10 +5,9 @@
   <Mappings Location="my_lib" Library="my_lib"/>
   <Mappings Location="Common Libraries" Library="not mapped"/>
   <Mappings Location="step_2.vhd" Library="not mapped"/>
-  <Mappings Location="step_2A.vhd" Library="not mapped"/>
-  <Mappings Location="step_2B.vhd" Library="not mapped"/>
   <Mappings Location="step_6_external_compiler.vhd" Library="not mapped"/>
   <Mappings Location="step_7_your_own_project.vhd" Library="not mapped"/>
+  <Mappings Location="testbench_goal.vhd" Library="not mapped"/>
   <Mappings Location="Common Libraries/STD" Library="std"/>
   <Mappings Location="" Library="work"/>
 </com.sigasi.hdt.shared.librarymapping.model:LibraryMappings>
