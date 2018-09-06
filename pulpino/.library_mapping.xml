@@ -5,18 +5,23 @@
   <Mappings Location="Common Libraries" Library="not mapped"/>
   <Mappings Location="ips/adv_dbg_if/doc" Library="not mapped"/>
   <Mappings Location="ips/apb/apb_event_unit/include" Library="not mapped"/>
+  <Mappings Location="ips/apb/apb_uart_sv/apb_uart_sv.sv" Library="not mapped"/>
   <Mappings Location="ips/apb/apb_uart_sv/uart_interrupt.sv" Library="not mapped"/>
+  <Mappings Location="ips/axi" Library="not mapped"/>
   <Mappings Location="ips/fpu/document" Library="not mapped"/>
   <Mappings Location="ips/fpu/hdl/modelsim_div_sqrt" Library="not mapped"/>
   <Mappings Location="ips/riscv/ci" Library="not mapped"/>
   <Mappings Location="ips/riscv/doc" Library="not mapped"/>
   <Mappings Location="ips/riscv/include" Library="not mapped"/>
-  <Mappings Location="ips/riscv/tb/serDiv/scripts" Library="not mapped"/>
+  <Mappings Location="ips/riscv/riscv_register_file.sv" Library="not mapped"/>
+  <Mappings Location="ips/riscv/tb" Library="not mapped"/>
+  <Mappings Location="ips/riscv/verilator-model/cluster_clock_gating.sv" Library="not mapped"/>
+  <Mappings Location="ips/riscv/verilator-model/dp_ram.sv" Library="not mapped"/>
   <Mappings Location="ips/zero-riscy/ci" Library="not mapped"/>
   <Mappings Location="ips/zero-riscy/include" Library="not mapped"/>
+  <Mappings Location="ips/zero-riscy/zeroriscy_register_file_ff.sv" Library="not mapped"/>
   <Mappings Location="rtl/includes" Library="not mapped"/>
-  <Mappings Location="tb/jtag_dpi" Library="not mapped"/>
-  <Mappings Location="tb/mem_dpi" Library="not mapped"/>
+  <Mappings Location="tb" Library="not mapped"/>
   <Mappings Location="Common Libraries/STD" Library="std"/>
   <Mappings Location="" Library="work"/>
   <Mappings Location="ips/riscv/include/apu_core_package.sv" Library="work"/>
