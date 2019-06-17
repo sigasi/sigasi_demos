@@ -1,2 +1,2 @@
 eclipse.preferences.version=1
-includePath=src/
+includePath=examples/integrated/ubus/sv;/uvm
