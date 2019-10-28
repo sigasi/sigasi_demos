@@ -1,0 +1,92 @@
+// 1. Group samplings
+// 2. Group all busses and interconnects
+// 3. Hide clk and rst
+// 4. Color blocks, wires and ports
+// 5. Hide disconnected ports
+diagram work.VME64xCore_Top.RTL {
+	// Group samplings
+	def block group sampling (regex".*nputSample")
+
+	// Group VME bus
+	def wire group VMEInput (regex"VME_.*_i")
+
+	// Group regular inputs
+	def wire group input (regex"(?=[A-Z][A-Z][A-Z]_i)^[^I].*$", STALL_i)
+
+	// Group the ader
+	def wire group Ader (regex"s_Ader[0-9]")
+
+	// Group VME samples
+	def wire group VMESample (regex"VME_[A-Z]+_n_oversampled")
+
+	// Group VME output
+	def wire group VMEOutput (VME_BERR_o, VME_DATA_OE_N_o, VME_LWORD_n_o,
+		regex"VME_RETRY_.*_o", regex"s_VME_DTACK.*_VMEbus|VME_ADDR.*_o|s_VME_DATA.*VMEbus")
+
+	// Group loopback signals
+	def wire group loopback (s_CRAMaddr, s_CRAMdataIn, s_CRAMwea, s_CRaddr, s_en_wr_CSR,
+		s_CrCsrOffsetAddr, s_CSRData_o, s_err_flag, s_bytes, s_time)
+
+	// Group interconnecting signals
+	def wire group interconnect (s_CRdata, s_CRAMdataOut, s_reset_flag, s_CSRData_i,
+		s_ModuleEnable, s_Sw_Reset, s_Endian, s_BAR)
+
+	// Group regular outputs
+	def wire group output (regex"[A-Z][A-Z][A-Z]_o")
+
+	// Group interrupts
+	def wire group interrupt (regex"s_INT.*", IRQ_i)
+
+	// Group IRQ VME output
+	def wire group IRQVMEOutput (regex"s_VME_.*IRQ.*")
+
+	// Group multiplexers
+	def wire group multiplexers (VME_DATA_DIR_o, VME_DTACK_n_o, INT_ack_o, VME_DATA_o,
+		WE_o, VME_IRQ_o, VME_DTACK_OE_o
+	)
+
+	// Hide clocks and resets
+	wire clk_i, rst_n_i {
+		hide
+	}
+
+	// Color a disruptive wire
+	wire interrupt { color purple }
+
+	block sampling {
+		color green
+		// collapse
+		port clk_i {
+			hide
+		}
+
+		block RegInputSample {
+			color aqua
+		}
+
+		block WRITEinputSample {
+			color red
+		}
+
+		block regex".*" {
+			port regex"clk_i" {
+				hide
+			}
+		}
+	}
+
+	block Inst_VME_CR_CSR_Space { color purple }
+
+	block Inst_VME_bus { color aqua }
+
+	block Inst_VME_IRQ_Controller { color orange }
+
+	// Hide disconnected ports
+	port VME_GA_i, rst_n_i, clk_i {
+		hide
+	}
+
+	// Color the important output port
+	port regex"multiplexers" { color red }
+}
+

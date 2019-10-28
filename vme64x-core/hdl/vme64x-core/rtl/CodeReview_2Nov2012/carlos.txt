@@ -1,0 +1,172 @@
+----------------------------------------
+-- vme64x_core review
+----------------------------------------
+-- Severity:
+-- (!) - serious
+-- (m) - medium
+-- (_) - cosmetic
+-- (o) - optimization
+-- (?) - question
+----------------------------------------
+-- I've gone sequentially reading the files,
+-- so probably some of the details written
+-- here are already solved within the cores.
+----------------------------------------
+
+Project in repo:
+
+-- (o) Repo could be restructured. There are references (such as some schematics
+       and reference pdfs quite outdated) that should be replaced/removed. Take
+       a look to /trunk/documentation/references.
+
+General:
+-- (_) Use Vim/Emacs for better alignment.
+-- (_) Comment the Doxygen way and remove unnecesary "End of file" comments?
+-- (_) Add name to processes.
+
+--------------------
+vm64_pack.vhd
+--------------------
+-- (m) Reference the "AM table" (line 75) to a document. It could be probably
+       added the HEX CODEs from the VME6$ reference manual as comments.
+-- (o) Probably c_FUNC[X]_ADER_[Y] constants can be all replaced by a
+       function call. Less error prone.
+-- (_) t_transferType error could be renamed to something different: TT_Error.
+-- (o) I would put a prefix at the begining of every state of the fsm. For instance,
+       in t_mainFSMstates (line 303 on):
+          IDLE           ->  S0_IDLE
+          DECODE_ACCESS  ->  S1_DECODE_ACCESS
+          WAIT_FOR_DS    ->  S2_WAIT_FOR_DS
+       Besides, I would put a reset state, R0_RESET, to ease the task of
+       resetting the core (probably already done in IDLE).
+-- (o) Same as above for t_initState (line 344).
+-- (_) Indenting (Vim is '=' key over a visual block) ;-)
+-- (_) Hidden characters (return line in DOS systems) in some parts of the
+       code (line 689 i.e.)
+-- (_) Use consistent initialization of output signal, either inside the
+       component or outside. See FlipFlopD and EdgeDetection.
+-- (_) I prefer having all the inputs and outputs in different lines while
+       declarating a component.
+-- (_) Notation: start with lower cases. See FlipFlopD, EdgeDetection,
+       RisEdgeDetection.
+-- (_) Notation: some input signals have missed the _i prefix.
+--------------------
+
+--------------------
+vme_CR_pack.vhd
+--------------------
+-- (_) Probably better to put slv's in VHDL'93 hexadecimal style
+       (c_amcap, c_amcap0,...).
+       Notation: c_[HIGERCASES]. Add a reference note to where are the values gotten from.
+--------------------
+
+--------------------
+vme_CSR_pack.vhd
+--------------------
+--------------------
+
+
+--------------------
+VME64xCore_Top.vhd
+--------------------
+-- (?) If all the operations are controlled by DS lines (and others), is it necessary
+       to place double or triple buffering in the address and data lines?
+       In any case, which is the signal that triggers the FSM? In case there are two,
+       probably it will be good placed a window wait time to overcome the problems
+       you had while decoding operation to perform.
+-- (_) Probably better to move the process to freeze the data received from the
+       wishbone operation (line 531) inside VME_Wb_master.vhd
+--------------------
+
+--------------------
+VME_Wb_master.vhd
+--------------------
+-- (_) Added suffixes _i, _o to the ports.
+-- (_) Probably mainFSMreset can drive the 'reset' port directly.
+       "One reset to rule them all".
+       In case of if then structures with a little of combinatorial, instead of:
+          if reset = '1' or mainFSMreset = '1' or (stall_i = '0' and s_cyc = '1') then
+       I prefer:
+          if   (reset        = '1')
+            or (mainFSMreset = '1')
+            or (stall_i = '0' and s_cyc = '1') then
+       think, it is easier to read.
+--------------------
+
+--------------------
+VME_CR_CSR_Space.vhd
+--------------------
+-- (_) In processes in which one of the signals to be updated is updated in much
+       less situations than the rest of signals, I try to put it in a different
+       process to have all the cases correctly covered.
+       Maybe s_bar_written and reset_flag in p_CSR_Write can get independency.
+--------------------
+
+--------------------
+VME_CRAM.vhd
+--------------------
+-- (_) Change (clk'event and clk = '1') for rising_edge(clk)
+--------------------
+
+--------------------
+VME_bus.vhd
+--------------------
+-- (o) Remove "use IEEE.numeric_std.unsigned;", redundant.
+-- (o) Maybe better to have a common global reset. Processes for s_wberr1, s_rty1.
+-- (?) Debug leds should be removed?
+-- (?) VME_RST_n_i what for?
+--------------------
+
+--------------------
+VME_SharedComps.vhd
+--------------------
+-- (_) Hidden characters.
+--------------------
+
+--------------------
+VME_Init.vhd
+--------------------
+-- (o) As Tom said, it is probably better group FUNC into an array. Then add some
+       translation functions in one of the packages, it will help to reduce errors
+       and being a little less verbose in the components.
+-- (o) I would put a general reset control process to keep coherence in the reset
+       of the module.
+--------------------
+
+--------------------
+VME_IRQ_Controller.vhd
+--------------------
+-- (_) In the process in line 317, it would be better have records that
+       which are assigned with predefined record constants. It will reduce the
+       length and possible errors while assigning values to the outputs.
+-- (o) In the same process the when others => clause is missing. Probably it
+       would be better set a deferred output before the case, so it will always
+       set an output (no latches here??).
+-- (o) Coming back to the process in line 243, the previous comment is applicable.
+       Recommend to preassign before the case to avoid unwanted latches.
+-- (o) Reset as Tom pointed out. Keep consistent notation to avoid this kind of
+       problems.
+--------------------
+
+--------------------
+VME_swapper.vhd
+--------------------
+--------------------
+
+
+--------------------
+VME_Func_Math.vhd
+--------------------
+-- (_) The ports can be reduced if reagrouped. Use of translation function to
+       keep STD_LOGIC_VECTOR boundaries easy to work with.
+--------------------
+
+--------------------
+VME_Am_Match.vhd
+--------------------
+--------------------
+
+--------------------
+VME_Access_Decode.vhd
+--------------------
+--------------------

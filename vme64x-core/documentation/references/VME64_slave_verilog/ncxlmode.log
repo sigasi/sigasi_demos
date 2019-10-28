@@ -1,0 +1,23 @@
+ncxlmode: v2.2.(s19): (c) Copyright 1995 - 2000 Cadence Design Systems, Inc.
+ncxlmode: v2.2.(s19): Started on Jun 10, 2003 at 15:53:14
+ncxlmode
+	-f
+	vme.vc
+	+ncsimargs+"-gui"
+	+debug
+	+ncaccess+wc
+
+ncxlmode: *W,OPTNOS: Option (+caxl) not supported in ncxlmode.
+ncxlmode: *W,BADPRF: The +debug option may have an adverse performance impact.
+ncsim> source /vlsicad/micsoft/LDV22/tools/inca/files/ncsimrc
+ncsim> scope -set test_fixt
+ncsim> scope -set test_fixt.vme_xil_top1
+ncsim> scope -set test_fixt.vme_xil_top1.vme_slave1
+ncsim> database -open waves -into waves.shm -default 
+Created default SHM database waves
+ncsim> probe -create -shm test_fixt.vme_xil_top1.vme_slave1.ACK_CYCLE test_fixt.vme_xil_top1.vme_slave1.ADDRBUS test_fixt.vme_xil_top1.vme_slave1.BAR test_fixt.vme_xil_top1.vme_slave1.BERRn test_fixt.vme_xil_top1.vme_slave1.C_ROM test_fixt.vme_xil_top1.vme_slave1.CLOCK test_fixt.vme_xil_top1.vme_slave1.CR_SPACE test_fixt.vme_xil_top1.vme_slave1.DATA_BUS test_fixt.vme_xil_top1.vme_slave1.DS0n test_fixt.vme_xil_top1.vme_slave1.DS1n test_fixt.vme_xil_top1.vme_slave1.DTACKn test_fixt.vme_xil_top1.vme_slave1.IRQ1n test_fixt.vme_xil_top1.vme_slave1.LOC_CS test_fixt.vme_xil_top1.vme_slave1.LOC_DS0n test_fixt.vme_xil_top1.vme_slave1.LOC_DS1n test_fixt.vme_xil_top1.vme_slave1.LOC_R_Wn test_fixt.vme_xil_top1.vme_slave1.LOCAL_BUS_IN test_fixt.vme_xil_top1.vme_slave1.LWORDn test_fixt.vme_xil_top1.vme_slave1.RESETn test_fixt.vme_xil_top1.vme_slave1.ROM_DATA test_fixt.vme_xil_top1.vme_slave1.VME_AM test_fixt.vme_xil_top1.vme_slave1.VME_ASn test_fixt.vme_xil_top1.vme_slave1.VME_BUF_DIR test_fixt.vme_xil_top1.vme_slave1.VME_BUF_OE test_fixt.vme_xil_top1.vme_slave1.VME_R_Wn
+Created probe 1
+ncsim> run
+Simulation stopped via $stop(1) at time 21828 NS + 1
+ncsim> exit
+ncxlmode: v2.2.(s19): Exiting on Jun 10, 2003 at 15:53:58  (total: 00:00:44)

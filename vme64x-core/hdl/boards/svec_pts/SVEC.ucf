@@ -1,0 +1,144 @@
+
+NET "Reset" LOC = P24;
+NET "VME_ADDR_DIR_o" LOC = N5;
+NET "VME_ADDR_OE_N_o" LOC = N4;
+NET "VME_AM_i[0]" LOC = AK2;
+NET "VME_AM_i[1]" LOC = AE4;
+NET "VME_AM_i[2]" LOC = AF4;
+NET "VME_AM_i[3]" LOC = AF3;
+NET "VME_AM_i[4]" LOC = AG3;
+NET "VME_AM_i[5]" LOC = V8;
+NET "VME_DATA_b[0]" LOC = AA10;
+NET "VME_DATA_b[1]" LOC = AA9;
+NET "VME_DATA_b[2]" LOC = AD7;
+NET "VME_DATA_b[3]" LOC = AE7;
+NET "VME_DATA_b[4]" LOC = Y9;
+NET "VME_DATA_b[5]" LOC = Y8;
+NET "VME_DATA_b[6]" LOC = AE6;
+NET "VME_DATA_b[7]" LOC = AF6;
+NET "VME_DATA_b[8]" LOC = W11;
+NET "VME_DATA_b[9]" LOC = Y11;
+NET "VME_DATA_b[10]" LOC = AE5;
+NET "VME_DATA_b[11]" LOC = AG5;
+NET "VME_DATA_b[12]" LOC = T7;
+NET "VME_DATA_b[13]" LOC = T6;
+NET "VME_DATA_b[14]" LOC = AA7;
+NET "VME_DATA_b[15]" LOC = AA6;
+NET "VME_DATA_b[16]" LOC = AC6;
+NET "VME_DATA_b[17]" LOC = AD6;
+NET "VME_DATA_b[18]" LOC = AH5;
+NET "VME_DATA_b[19]" LOC = AK5;
+NET "VME_DATA_b[20]" LOC = W10;
+NET "VME_DATA_b[21]" LOC = W9;
+NET "VME_DATA_b[22]" LOC = AB7;
+NET "VME_DATA_b[23]" LOC = AB6;
+NET "VME_DATA_b[24]" LOC = W7;
+NET "VME_DATA_b[25]" LOC = W6;
+NET "VME_DATA_b[26]" LOC = AJ4;
+NET "VME_DATA_b[27]" LOC = AK4;
+NET "VME_DATA_b[28]" LOC = T9;
+NET "VME_DATA_b[29]" LOC = T8;
+NET "VME_DATA_b[30]" LOC = AH3;
+NET "VME_DATA_b[31]" LOC = AK3;
+
+NET "VME_IACK_n_i" LOC = N1;  
+NET "VME_RETRY_OE_o" LOC = R4;
+NET "VME_RETRY_n_o" LOC = AB2;
+NET "VME_RST_n_i" LOC = P4;
+#NET "VmeTck_i" LOC = D22;
+#NET "VmeTdi_i" LOC = C21;
+#NET "VmeTdo_o" LOC = B21;
+#NET "VmeTms_i" LOC = D21;
+NET "VME_WRITE_n_i" LOC = R1;
+
+
+
+
+
+
+
+#NET "FpLed_onb8_5" LOC = U3;
+#NET "FpLed_onb8_6" LOC = U4;
+
+NET "VME_AS_n_i" LOC = P6;
+NET "VME_BERR_o" LOC = R3;
+#NET "VmeDDirVfcToVdme_o" LOC = L9;
+NET "VME_DATA_DIR_o" LOC = P2;
+
+
+NET "VME_IACKIN_n_i" LOC = P7;
+NET "VME_IACKOUT_n_o" LOC = N3;
+NET "VME_IRQ_n_o[0]" LOC = AG4;
+NET "VME_IRQ_n_o[3]" LOC = N9;
+NET "VME_IRQ_n_o[4]" LOC = AF2;
+NET "VME_IRQ_n_o[5]" LOC = AH2;
+NET "VME_IRQ_n_o[6]" LOC = R7;
+#NET "VmeP0LvdsBunchClkIn_i" LOC = AE15;
+#NET "VmeP0LvdsBunchClkOut_o" LOC = AF15;
+#NET "VmeSysClk_ik" LOC = L8;
+NET "VME_ADDR_b[1]" LOC = AE3;
+NET "VME_ADDR_b[2]" LOC = AE1;
+NET "VME_ADDR_b[3]" LOC = N8;
+NET "VME_ADDR_b[4]" LOC = N7;
+NET "VME_ADDR_b[5]" LOC = AC5;
+NET "VME_ADDR_b[6]" LOC = AC4;
+NET "VME_ADDR_b[7]" LOC = AD4;
+NET "VME_ADDR_b[8]" LOC = AD3;
+NET "VME_ADDR_b[9]" LOC = AB4;
+NET "VME_ADDR_b[10]" LOC = AB3;
+NET "VME_ADDR_b[11]" LOC = AD2;
+NET "VME_ADDR_b[12]" LOC = AD1;
+NET "VME_ADDR_b[13]" LOC = AC3;
+NET "VME_ADDR_b[14]" LOC = AC1;
+NET "VME_ADDR_b[15]" LOC = Y4;
+NET "VME_ADDR_b[16]" LOC = Y3;
+NET "VME_ADDR_b[17]" LOC = Y2;
+NET "VME_ADDR_b[18]" LOC = Y1;
+NET "VME_ADDR_b[19]" LOC = AA5;
+NET "VME_ADDR_b[20]" LOC = AA4;
+NET "VME_ADDR_b[21]" LOC = W3;
+NET "VME_ADDR_b[22]" LOC = W1;
+NET "VME_ADDR_b[23]" LOC = V2;
+NET "VME_ADDR_b[24]" LOC = V1;
+NET "VME_ADDR_b[25]" LOC = U5;
+NET "VME_ADDR_b[26]" LOC = U4;
+NET "VME_ADDR_b[27]" LOC = U3;
+NET "VME_ADDR_b[28]" LOC = U1;
+NET "VME_ADDR_b[29]" LOC = T4;
+NET "VME_ADDR_b[30]" LOC = T3;
+NET "VME_ADDR_b[31]" LOC = T2;
+NET "VME_DATA_OE_N_o" LOC = P1;
+
+NET "VME_DS_n_i[0]" LOC = Y7;
+NET "VME_DS_n_i[1]" LOC = Y6;
+NET "VME_DTACK_OE_o" LOC = T1;
+NET "VME_DTACK_n_o" LOC = R5;
+NET "VME_GA_i[5]" LOC = M6;
+NET "VME_GA_i[0]" LOC = V7;
+NET "VME_GA_i[1]" LOC = AH1;
+NET "VME_GA_i[2]" LOC = AJ1;
+NET "VME_GA_i[3]" LOC = V10;
+NET "VME_GA_i[4]" LOC = V9;
+NET "VME_IRQ_n_o[1]" LOC = AH4;
+NET "VME_IRQ_n_o[2]" LOC = N10;
+NET "VME_LWORD_n_b" LOC = M7;
+
+NET "clk_i" LOC = V26;
+
+# PlanAhead Generated IO constraints 
+#NET "FpLed_onb8_6" IOSTANDARD = LVCMOS33;
+#Created by Constraints Editor (xc6slx150t-fgg676-3) - 2011/02/21
+NET "clk_i" TNM_NET = "clk_i_group";
+#TIMESPEC TS_clk_i = PERIOD "clk_i" 50 ns HIGH 50%;
+#Created by Constraints Editor (xc6slx150t-fgg676-3) - 2011/06/30
+TIMESPEC "TS_clk_i" = PERIOD "clk_i_group" 50 ns HIGH 50%;
+# Add by Davide for debug
+NET "leds[0]" LOC = AD27;
+NET "leds[1]" LOC = AD26;
+NET "leds[2]" LOC = AC28;
+NET "leds[3]" LOC = AC27;
+NET "leds[4]" LOC = AE27;
+NET "leds[5]" LOC = AE30;
+NET "leds[6]" LOC = AF28;
+NET "leds[7]" LOC = AE28;
+

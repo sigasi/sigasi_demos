@@ -1,0 +1,63 @@
+Synthesis warnings:
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+/vme64x_pack.vhd" Line 805: Function f_div8 does not always return a value.
+
+/VME_CR_CSR_Space.vhd" Line 223: Case choice must be a locally static expression
+/VME_CR_CSR_Space.vhd" Line 227: Case choice must be a locally static expression
+/VME_CR_CSR_Space.vhd" Line 232: Case choice must be a locally static expression
+/VME_CR_CSR_Space.vhd" Line 246: Case choice must be a locally static expression
+/VME_CR_CSR_Space.vhd" Line 253: Case choice must be a locally static expression
+/VME_CR_CSR_Space.vhd" Line 256: Case choice must be a locally static expression
+/VME_CR_CSR_Space.vhd" Line 263: Case choice must be a locally static expression
+/VME_CR_CSR_Space.vhd" Line 267: Case choice must be a locally static expression
+/VME_CR_CSR_Space.vhd" Line 270: Case choice must be a locally static expression
+/VME_CR_CSR_Space.vhd" Line 273: Case choice must be a locally static expression
+
+/VME_bus.vhd" Line 506: Assignment to s_2elatchaddr ignored, since the identifier is never used
+/VME_bus.vhd" Line 508: Assignment to s_berr ignored, since the identifier is never used
+
+/VME_bus.vhd" Line 1344: Assignment to s_cyclecount ignored, since the identifier is never used
+
+/VME_Funct_Match.vhd" Line 213: Assignment to debugfunct ignored, since the identifier is never used
+
+/VME_Am_Match.vhd" Line 124: Assignment to debugam ignored, since the identifier is never used
+
+/VME_bus.vhd" Line 188: Net <s_phase1addr[63]> does not have a driver.
+/VME_bus.vhd" Line 189: Net <s_phase2addr[7]> does not have a driver.
+/VME_bus.vhd" Line 204: Net <s_XAM[7]> does not have a driver.
+
+/VME_CR_CSR_Space.vhd" Line 191: Assignment to s_barerror ignored, since the identifier is never used
+
+/VME_bus.vhd" line 1726. All outputs of instance <DS1EdgeDetect> of block <EdgeDetection> are unconnected in block <VME_bus>. Underlying logic will be removed.
+
+/VME_bus.vhd" line 1492: Output port <Funct_Sel> of the instance <Inst_Access_Decode> is unconnected or connected to loadless signal.
+/VME_bus.vhd" line 1726: Output port <sigEdge_o> of the instance <DS1EdgeDetect> is unconnected or connected to loadless signal.
+
+Signal <s_phase1addr<63:8>> is used but never assigned. This sourceless signal will be automatically connected to value GND.
+Signal <s_phase2addr<7:0>> is used but never assigned. This sourceless signal will be automatically connected to value GND.
+Signal <s_XAM> is used but never assigned. This sourceless signal will be automatically connected to value GND.
+
+
+
+INFO:Xst:2261 - The FF/Latch <DSinputSample/reg_1_0> in Unit <VME64xCore_Top> is equivalent to the following FF/Latch, which will be removed : <DSinputSample1/reg_1_0>
+INFO:Xst:2261 - The FF/Latch <DSinputSample/reg_1_1> in Unit <VME64xCore_Top> is equivalent to the following FF/Latch, which will be removed : <DSinputSample1/reg_1_1>
+INFO:Xst:2261 - The FF/Latch <Inst_VME_bus/ASrisingEdge/s_1> in Unit <VME64xCore_Top> is equivalent to the following FF/Latch, which will be removed : <Inst_VME_bus/ASfallingEdge/s_1> 
+INFO:Xst:2261 - The FF/Latch <ASinputSample/s_1> in Unit <VME64xCore_Top> is equivalent to the following FF/Latch, which will be removed : <ASinputSample1/s_1>
+
+
+General comments:
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+* Add a reset output port on core's top level.
+  This reset should come from the software reset bit in CSR.
+
+* Update the Manifest file.
+  -> Remove VME_DpBlockRam.vhd
+  -> Add VME_CRAM.vhd
+
+* Change MBLT endian register name to SWAP configuration register (or something similar).
+
+* Move to a git repository.
+
+

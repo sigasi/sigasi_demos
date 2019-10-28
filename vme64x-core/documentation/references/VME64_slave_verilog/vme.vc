@@ -1,0 +1,23 @@
++tms_incl+
++delay_mode_path
++caxl
++sxl_keep_minimum 
++libext+.v+
++sdf_verbose
++sdf_nocheck_celltype
++neg_tchk
++gui_sync
+
+//+notimingchecks
+
+test_fixt.v
+
+vme_xil_top.v
+vme_slave.v
+vme_mem.v
+ga_decoder.v
+loc_bus.v
+mpx_4.v
+mpx_10.v
+
+-y /homedir/ljuslin/fec/verilog/fec_xilinx/XilinxCoreLib

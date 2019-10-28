@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.sigasi.hdt.shared.librarymapping.model:LibraryMappings xmlns:com.sigasi.hdt.shared.librarymapping.model="com.sigasi.hdt.vhdl.scoping.librarymapping" Version="2">
+  <Mappings Location="" Library="not mapped"/>
+  <Mappings Location="uvm-1.2/deprecated" Library="not mapped"/>
+  <Mappings Location="uvm-1.2/macros/uvm_undefineall.svh" Library="not mapped"/>
+  <Mappings Location="hello_world" Library="work"/>
+  <Mappings Location="uvm-1.2" Library="work"/>
+</com.sigasi.hdt.shared.librarymapping.model:LibraryMappings>

@@ -1,0 +1,93 @@
+VME64xCore_Top.vhd
+------------------
+
+In the comments, it would be useful to explain a bit about the context
+this core expects in the PCB, e.g. what chips are used in the SVEC
+board (which is the reference platform for this core). This would help
+people understand e.g. how open collector outputs are dealt with, or
+what the VME_LWORD_n_o and VME_ADDR_o outputs are for.
+
+VME_AS_n_i and VME_DS_n_i are passed to two different synchronizer
+blocks in parallel. The actual implementation of this will depend on
+how clever the synthesis tool is. If it is not clever, it will not
+notice it can tap the three-FF synchronizer to get the double-FF
+output, and we will have two parallel synchronizers: not good,
+especially considering that one of them will not use the I/O FFs. If
+these double-clocked signals are really needed, the triple-clocking
+block could deliver an extra ouput port for them. 
+
+There are a number of outputs which are supposed to go to the outside
+world (VME_DTACK_n_o, WE_o, VME_DATA_DIR_o...) and which are not using
+I/O FFs because they are the result of some combinational logic. This
+will result in tricky timing issues, and need complex constraints to
+P&R to guarantee consistent results. I would strongly advise to make
+sure all these signals are outputs of I/O FFs, with any necessary
+logic placed *before* these FFs. In general, all inputs to the core
+should be sampled before using them, and all outputs should be the
+result of clocking in I/O FFs.
+
+VME_bus.vhd
+-----------
+
+There is a comment at line 527 saying:
+-- If the S_FPGA will be provided to a core who drives these lines
+-- without
+-- erase the A_FPGA the above mentioned lines should be changed to 'Z'
+-- !!!
+This should probably change to become a generic so that people can
+decide on the behaviour they want. It will then be more visible, not
+hidden in the middle of the code. The sentence itself it quite
+cryptic. This core should not assume it is used in a board with a
+S_FPGA and a A_FPGA. 
+
+
+VME_IRQ_Controller.vhd
+----------------------
+
+Text diagram in the initial comments not clear regarding state
+IACKOUT2.
+
+Line 69: "To avoid the time constraint" -> "To respect the timing
+constraint"
+
+Signal naming is not consistent. If the "s_" prefix is used, it should
+be used for all internal signals.
+
+Line 104: "reset" is clearly used as an active-low signal in this
+entity, and it is an input port, so its name should be "reset_n_i".
+
+Instantiation of many FlipFlopD components: a single clocked process
+would be more compact and easier to understand.
+
+Line 247: why should the interrupt controller not be allowed to go to
+the IRQ state when VME_IACKIN_n_i='0'?
+
+Line 256: once we have allowed going to the IRQ state even if
+VME_IACKIN_n_i is low, we should detect a falling edge of
+VME_IACKIN_n_i while in the IRQ state to proceed. A simple detection
+of '0' won't work anymore.
+
+Line 321: In the IDLE state this block should drive whatever it gets
+from IACKIN into IACKOUT. Otherwise it is blocking interrupt
+acknowledgement for any cards to the right of the module where it is
+instantiated. In general the IACKIN-IACKOUT daisy-chain needs to be
+looked at in detail. Driving IACKOUT with AS as is done in other
+states looks weird. IACKOUT should be driven by IACKIN when the IACK
+chain is not intercepted by this block.
+
+Line 445: these are active-low signals so their value after reset
+should be '1', not '0'.
+
+I don't understand the whole DS_LATCH thing. We detect in state
+WAIT_DS that there was some change in the DS lines. This makes us go
+to state LATCH_DS, where the DS lines are latched. Then we check if
+VME_DS_latched(0) is '0' in the ACK_INT state. Wouldn't it be simpler
+to just wait for DS(0) to become '0'?
+
+Line 467: s_enable opens the sampling gate for INT_Req only when
+either we have not latched a request (with INT_Req_sample) or when
+DTACK is being driven low. In this last case, we are in the DTACK
+state (until AS goes up) and any INT_Req pulse will go through the
+sampling but in a transient way, i.e. it will not "stick" and we will
+lose it. This behavior should be documented so that users of the core
+know.

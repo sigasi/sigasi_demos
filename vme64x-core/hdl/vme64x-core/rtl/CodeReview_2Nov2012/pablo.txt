@@ -1,0 +1,23 @@
+----------------------------------------
+-- vme64x_core review
+----------------------------------------
+-- Severity:
+-- (!) - serious
+-- (m) - medium
+-- (_) - cosmetic
+-- (o) - optimization
+-- (?) - question
+
+vme64x_user_manual
+
+(_) There is some random use of capital letters throughout the document. 
+
+
+
+vme_bus.vhd
+(m) It was pointed out in the presentation that the DS toggle could eventually not be properlly detected. In the datasheet it is stated that the skew between this lines can be up to a maximum of 20ns. A single wait state may be not enough if the vme core is clocked at 100MHz. On the other hand it is not necessary if the core is clocked at f<50Mhz. Probably it could be a good idea to use some generic (as carlos sugested) to insert/remove wait states depending on the clocking frequency.
+
+VME_IRQ_Controller.vhd
+(m!) As it is already pointed out by Javier the IACKIN-IACKOUT should be looked in more detail. I doubt the interrupt handler can deal correctly with rule 4.41 (30ns min skew between AS release and IACKOUT release). Notice that this rule applies on the VME connector edge so even with an internal latency of 2 cycles at 10ns you still have all the propagations delays to take care of.  
+
+

@@ -1,0 +1,48 @@
+Severity:
+(!) - serious
+(m) - medium
+(_) - cosmetic
+(o) - optimization
+
+General:
+- (m) avoid std_logic_unsigned/std_logic_arith libraries. These are Synopsys's own libraries
+  (although widesperad and more-or-less supported by every tool), being slowly phased out. 
+  Use numeric_std instead, which the official standard.
+- (m) comment ports and generics in each module.
+
+Top Level:
+- (_) Process at lines 530+: I would place it in VME_bus. This way the top level module will only
+  act as an interconnect putting together all VME core components.
+
+SharedComps:
+- (!) place "KEEP" attribute in synchronizer chain modules to make sure Xilinx's software wont
+  try to optimize/merge them. Switch off LUT-based shift register inference for these blocks.
+
+VME_Access_Decode:
+- (_) I would recommend grouping the ader/amcap/xamcap ports into an array of records, this makes the code
+  much easier to read and maintain.
+- (!) process driving cardsel and base_addr: sequential nonblocking assignments are potentially
+  dangerous - you are relying on assumption that if any of bits in s_func_sel is 1, cardsel (previously set
+  to 0) will be overwritten by the loop. It's safer to use variables and blocking assignments in such cases.
+- (o) provide a generic allowing for reduction of device functions. In most cases, we need only 1 A24/A32/D32 BAR.
+  Decoding and storing BAR configurations takes large percentage of the FPGA resources consumed by the VME core.
+
+VME_CR_CSR_Space:
+- (m) lines 223+ (case statement) wouldn't it be simpler to do the slicing / zero padding in case statement or adjust
+  the constants in the package file instead of appending zeroes and slicing in each case entry?
+- (m) GADER_1 loop: please put a single-line comment describing what the generate loop does.
+
+VME_IRQ_Controller:
+- (!) line 235: is reset signal active low or high?
+
+VME_bus:
+- (m) don't comment out code that is not used. Just remove it. 
+
+
+Coding style:
+--------------
+- (_) pass the code via indenting tool (emacs Ctrl-C/Ctrl-B for example)
+- (m) _i/_o/_b suffixes on ports, g_ prefixes on generics, c_ prefixes on constants
+- (_) avoid comments that do not provide any useful information (for example: 
+  "----------------- entity declaration --- (lots of dashes....)" followed by "entity (".
+  

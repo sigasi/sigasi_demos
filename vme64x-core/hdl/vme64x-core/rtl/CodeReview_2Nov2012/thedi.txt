@@ -1,0 +1,302 @@
+General stuff
+--------------------------------------------------------------------------------
+I really like the fact that you wrote a lot of comments in the file headers. These
+are very descriptive and very easy to read, which helps users quickly get up to
+speed on how they can use your core in their design.
+
+I hope the following will not demoralize you too much, because I'm going to
+start with the things that should be improved. Feel free to step into the next
+office and smack me one if you feel demoralized. :)
+
+First thing I notice all across your designs is that your naming standards are
+inconsistent. You combine camelCasing with PascalCasing and c_or_vhdl_style_casing,
+which at least for me makes the code a little hard to read. This can either be
+from you, or from the inherited code, so I can't complain too much about that. I
+realize that changing signal naming at this particular moment in time would
+pretty much be a pain in the ass and a long process, so I don't know what to
+advise you in this respect.
+
+What I would advise is to at least have the ports follow CERN HDL naming
+conventions. That is, name input ports with an _i suffix, output ports
+with a _o suffix and bidirectional ports with _b suffix. In this way, somebody
+who has used CERN HDL before will be able to read your code much easier.
+
+It might also help to have some comments accompanying your entity ports. This can
+help users quickly instantiate your core (or components of your core), in case
+they need them.
+
+Another fairly bothersome thing is the fact that your ISE project is not portable.
+When I tried to synthesize your design, it was asking me for locating the 
+design sources.
+
+You have some more detailed comments below.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+VME_Access_Decode.vhd
+--------------------------------------------------------------------------------
+- line 8: typo
+"This component check [...]"
+should be:
+"This component checkS [...]"
+
+- line 20: typo
+"[...] the block diagram the main component are two [...]"
+should be
+"[...] the block diagram the main componentS are two [...]"
+or
+"[...] there are two main components in the block diagram [...]"
+
+- line 66: the "!!!" at the end is a bit aggressive towards the reader :)
+I would advise you to change it to a full stop (".") or a simple exclamation 
+mark ("!")
+
+- line 71: typo:
+"corrisponding" -> "corresponding"
+
+- line 83: 
+typos:
+"corrisponding" -> "corresponding"
+"the VME Master need to know", should be either
+"the VME Masters need to know", or
+"the VME Master needs to know" 
+
+- line 87: typo
+"corrisponding" -> "corresponding"
+
+- line 91: typos
+"eg: lets imagine" -> "let's imagine"
+"we want be able to access" -> "we want to (be able TO) access"
+
+- line 93: typo:
+"corrisponding" -> "corresponding"
+
+- line 106: typo
+"[...] so we need of two functions [...]" -> "[...] so we need two functions 
+[...]"
+
+--------------------------------------------------------------------------------
+VME_Am_Decode.vhd
+--------------------------------------------------------------------------------
+I would not encourage using VHDL code in the comments to describe what you want
+to do. I mean here things like in line 13, where you say "AmMatch <= [...]",
+and particularly things like "to_integer(unsigned([...]))". 
+
+Comments are supposed to be verbose descriptions of what your design does, avoid 
+using code inside your comments. The reader can read and understand the code
+himself. If you *must* use code that you think makes your comments more 
+understandable, try to make your code as simple as possible. Using "to_integer"
+and its lengthy brothers adds unnecessary details that can otherwise be
+easily understood by the reader.
+
+- line 9: typo
+"corrispondent" -> "corresponding"
+
+- lines 11-13: maybe you could make the comments a little clearer; at the moment
+they seem a bit fuzzy to me, you have a bunch of unfinished sentences there that
+don't make too much sense.
+
+- line 14: typo
+"[...] different address wide [...]" -> "[...] different address widths [...]"
+
+- last two processes:
+I find the first statements in these processes redundant. Do they help any by
+being there?
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+ram_8bits.vhd
+spram.vhd
+xwb_ram.vhd
+--------------------------------------------------------------------------------
+There is an undefined constant here -- c_SIZE, that you are using to initialize
+your g_size generic. However, this constant is not defined anywhere in the context
+of these files. I tried finding it in the vme64x_pack.vhd file as well, but it's
+not defined there.
+
+You should either use predefined values for these generics, or defined this
+constant somewhere in a package and "use" it in your design sources. I would
+recommend the former.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+VME_bus.vhd
+--------------------------------------------------------------------------------
+- lines 362-375: the table's column lines are not aligned in some places.
+
+- line 378: were you using TAB characterts to align the components of your 
+with..select statement? I would assume yes, because in my editor the second and
+third assignment of the multiplexer are unaligned with the first, and the other
+11 assignments are unaligned with the first three. Using SPACE characters to
+align these statements (and others in general) would probably be a better idea.
+You can also configure your editor to insert SPACE characters instead of TABs
+
+This can make your code aligned irrespective of the machine or the reader's
+editor.
+
+I can see you have quite a few similar statements following; I will try to list 
+them out here, to make it easier for you to change them.
+
+- line 395: funny indentation on the with..select
+
+- line 429: funny indentation on the with..select
+
+- line 444: funny indentation in the process
+
+- line 470: funny indentation in the with..select
+
+- lines 525-532: comments are unaligned, probably another TAB-related issue?
+
+- line 638: funny indentation
+
+- lines 643-649: funny indentation in the if statement
+
+- line 653: funny indentation
+
+- lines 750-758: funny indentation on the (twice commented) if statement
+
+- lines 857-860: funny indentation on the (twice commented) if statement
+
+- lines 881-884: funny indentation
+
+- line 907: funny indentation
+
+- line 911: funny indentation
+
+- line 1034: the if statement in this process has a rather looooooooong condition
+in the elsif part. I would advise you to use a vector whose bits are set
+according to each of your conditions, and then check for that vector inside the
+elsif. That, or anything that might make the code more readable. It's hard to
+think anyone would bother reading a 7-line condition. True that you explain what
+you are doing in the comment preceding the process, but still... Try to make 
+that statement more readable. It can only do us good!
+
+- line 1054: typo: "overflow" -> "overflows"
+
+- lines 1167-1176: you could align the two with..select statements a little
+better, to make the code look nicer
+
+- lines 1309-1330 : Again, the if statement in this process is a bit hard to read
+both due to the long conditions, as well as some indenting issues.
+
+- lines 1382-1448: the signal assignment operators in this process are too far
+away from the signals. It would be a lot easier to read if you get them closer
+to the signals.
+
+- line 1456: funny indent
+
+- line 1478: funny indent
+
+- lines 1547-1561: it is a bit hard to read these statements; due to the many
+conditions you have, it is hard to separate assignments from conditions.
+
+- lines 1778-1785: place these statements in order -- led(0), led(1), led(2), etc.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+VME_CR_CSR_Space.vhd
+--------------------------------------------------------------------------------
+- line 9: typo: 
+"[...] CR/CSR space is used so is possible [...]" 
+-> 
+"[...] CR/CSR space is used so IT is possible [...]"
+
+- line 11: typo
+" mode are selected the write operation will not be successful."
+->
+" modeS are selected [...]"
+
+- line 47: "storaged" -> "stored"
+a bit aggressive with the "!!" here :)
+
+- line 127: funky indentation on the generic
+
+- line 158: funky indentation on the port
+
+- lines 178, 179: funky indentation on the signals
+
+- lines 184-193: I would indent these lines
+
+- line 220: indent
+
+- lines 222-277: Aren't the to_integer()'s in the case statement redundant? Or
+is it just because of the case in line 263?
+
+- lines 280-284: you might want to fix the indent here
+
+- line 353: indent
+
+- line 381: indent
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+VME_CR_pack.vhd
+--------------------------------------------------------------------------------
+- lines 37-59: I suggest you put the constant values in hex. They are a lot more
+readable than binary...
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+VME_CSR_pack.vhd
+--------------------------------------------------------------------------------
+- lines 40-84: indent these to make the code more readable
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+VME_Funct_Match.vhd
+--------------------------------------------------------------------------------
+- line 9: "corrisponding" -> "corresponding"
+
+- line 10: "subtract" -> "subtracted"
+
+- line 13: "here one example" -> "here IS one example"
+
+- line 29: "the master access" -> "the master accessES"
+
+- line 32: "the master write" -> "the master writeS"
+
+- line 33: "the master want access at the location" 
+-> "the master wantS to access the location"
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+VME_Init.vhd
+--------------------------------------------------------------------------------
+- lines 157, 171: You could add a comment describing what each of these process
+does. The process starting in line 171 is particularly hard to follow, so a
+comment would help a great deal here.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+VME_IRQ_Controller.vhd
+--------------------------------------------------------------------------------
+- Nice FSM drawing! You should however check line 33, it's not aligned to line 34
+
+- line 107, 130, 133, 134, 139: indent...
+
+- lines 251-253: keep the same indent as the rest of the IF statement
+
+- line 298: indent
+
+- line 316: this is actually a Moore FSM (outputs depend only on current state)
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+VME_SharedComps.vhd
+--------------------------------------------------------------------------------
+I personally find it a bad idea to define multiple components in the same file.
+When I get an entity name in an instantiation, my first instinct is to start
+looking for a file with the same name as the entity. 
+
+Once again, I am aware that this might come from the person before you, but I
+would strongly recommend to make the design more modular and easier to get
+around, by placing all those components in its separate file.
+
+- line 122: indent...
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+VME_swapper.vhd
+--------------------------------------------------------------------------------
+- lines 39, 74, 86, 98, 110, 122, 134, 146, 158: indent
+--------------------------------------------------------------------------------
