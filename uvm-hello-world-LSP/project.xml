@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:noNamespaceSchemaLocation="http://www.sigasi.com/schemas/project-description.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <metadata>
+      <file_format>1</file_format>
+      <date>2020-04-23T15:18:55.025+02:00</date>
+      <project_name>uvm-hello-world-lsp</project_name>
+      <default_white_space>SPACES</default_white_space>
+      <default_encoding>UTF-8</default_encoding>
+   </metadata>
+   <verilog_project_info>
+      <default_language_level>verilog_2005</default_language_level>
+      <verilog_sequences>
+         <verilog_sequence>
+            <preprocessor_settings>
+               <includePaths>
+                  <includePath>uvm-1.2/</includePath>
+               </includePaths>
+               <defines/>
+            </preprocessor_settings>
+            <verilog_files>
+               <file>
+                  <uri>hello_world/hello_world.sv</uri>
+                  <library>work</library>
+                  <white_space>SPACES</white_space>
+                  <encoding>UTF-8</encoding>
+                  <validation_level>VALIDATING</validation_level>
+                  <language_level>system_verilog_2012</language_level>
+               </file>
+               <file>
+                  <uri>uvm-1.2/uvm.sv</uri>
+                  <library>work</library>
+                  <white_space>SPACES</white_space>
+                  <encoding>UTF-8</encoding>
+                  <validation_level>VALIDATING</validation_level>
+                  <language_level>system_verilog_2012</language_level>
+               </file>
+            </verilog_files>
+         </verilog_sequence>
+      </verilog_sequences>
+   </verilog_project_info>
+</project>
