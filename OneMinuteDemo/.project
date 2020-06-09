@@ -45,7 +45,7 @@
 		<link>
 			<name>Common Libraries/uvm</name>
 			<type>2</type>
-			<location>/home/bartbrosens/Projects/sigasi_demos/OneMinuteDemo/uvm-1.2/uvm</location>
+			<locationURI>PROJECT_LOC/uvm-1.2/uvm</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
