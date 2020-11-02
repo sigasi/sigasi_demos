@@ -1,0 +1,17 @@
+{
+  "version": "0.1",
+  "mappings": [
+    {
+      "library": "work",
+      "files": [
+        ""
+      ]
+    },
+    {
+      "library": "unisim",
+      "files": [
+        "unisims"
+      ]
+    }
+  ]
+}

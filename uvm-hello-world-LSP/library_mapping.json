@@ -1,0 +1,16 @@
+{
+  "version": "0.1",
+  "mappings": [
+    {
+      "library": "work",
+      "files": [
+        "hello_world",
+        "uvm-1.2"
+      ]
+    }
+  ],
+  "excludedFiles": [
+    "uvm-1.2/deprecated",
+    "uvm-1.2/macros/uvm_undefineall.svh"
+  ]
+}
