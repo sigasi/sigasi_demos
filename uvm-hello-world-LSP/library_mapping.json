@@ -4,13 +4,12 @@
     {
       "library": "work",
       "files": [
-        "hello_world",
-        "uvm-1.2"
+        "hello_world/hello_world.sv",
+        "uvm-1.2/uvm.sv"
       ]
     }
   ],
   "excludedFiles": [
-    "uvm-1.2/deprecated",
-    "uvm-1.2/macros/uvm_undefineall.svh"
+    ""
   ]
 }
