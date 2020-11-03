@@ -1,0 +1,15 @@
+{
+  "version": "0.1",
+  "mappings": [
+    {
+      "library": "work",
+      "files": [
+        "hello_world/hello_world.sv",
+        "uvm-1.2/uvm.sv"
+      ]
+    }
+  ],
+  "excludedFiles": [
+    ""
+  ]
+}
