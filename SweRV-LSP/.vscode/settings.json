@@ -156,7 +156,7 @@
         "`define RV_BHT_ADDR_LO 4",
         "`define RV_RESET_VEC 'h80000000",
         "`define RV_BTB_INDEX1_HI 5",
-        "`define RV_BTB_INDEX2_HI 7"
+        "`define RV_BTB_INDEX2_HI 7",
         "`define RV_BTB_INDEX3_LO 8",
         "`define RV_BTB_ADDR_LO 4",
         "`define RV_BTB_ADDR_HI 5",
