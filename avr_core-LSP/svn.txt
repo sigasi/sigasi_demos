@@ -1,0 +1,11 @@
+Path: avr_core
+URL: http://opencores.org/ocsvn/avr_core
+Repository Root: http://opencores.org/ocsvn/avr_core
+Repository UUID: 5df8e3b5-7547-421a-b6d3-44925eb684d3
+Revision: 6
+Node Kind: directory
+Schedule: normal
+Last Changed Author: root
+Last Changed Rev: 6
+Last Changed Date: 2009-03-10 13:27:55 +0100 (Tue, 10 Mar 2009)
+
