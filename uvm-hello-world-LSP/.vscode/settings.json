@@ -1,0 +1,5 @@
+{
+    "sigasi.verilog.includePaths": [
+        "uvm-1.2"
+    ]
+}
