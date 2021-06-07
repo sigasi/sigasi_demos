@@ -1,0 +1,14 @@
+# Copyright lowRISC contributors.
+# Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# SPDX-License-Identifier: Apache-2.0
+#
+# waiver file for keymgr
+
+waive -rules {MISSING_STATE} -location {keymgr_ctrl.sv} -regexp {.*StCtrlDisabled.*} \
+      -comment "Disabled state absorbed into default."
+
+waive -rules {MISSING_STATE} -location {keymgr_ctrl.sv} -regexp {.*StCtrlInvalid.*} \
+      -comment "Invalid state absorbed into default."
+
+waive -rules {TERMINAL_STATE} -location {keymgr_sideload_key_ctrl.sv} -regexp {.*StSideloadStop.*} \
+      -comment "Intentional terminal state."

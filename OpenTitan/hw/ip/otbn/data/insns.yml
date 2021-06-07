@@ -1,0 +1,185 @@
+# Copyright lowRISC contributors.
+# Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# SPDX-License-Identifier: Apache-2.0
+
+# A machine readable description of the ISA
+#
+# This is used for generating documentation, but also for random test
+# and decoder generation.
+
+# The relative path to a YAML file defining the different instruction
+# encoding schemes
+encoding-schemes: enc-schemes.yml
+
+# Instructions are divided into a list of groups (under insn-groups). Each
+# group has the following fields, all of which are required.
+#
+#  key:     An internal name
+#  title:   A title used for documentation
+#  doc:     Markdown-format documentation for the group
+#  insns:   The relative path to the instructions in this group
+#
+# Groups appear in the documentation in list order. The insns key points at
+# another YAML file. That file should contain a list of instruction objects.
+# Again, the instructions appear in the documentation in list order.
+#
+# Each instruction object has the following fields:
+#
+#  mnemonic:  Instruction mnemonic (required)
+#
+#  group:     The instruction group in which this instruction should
+#             appear. Defaults to the first entry in the insn-groups
+#             list. (optional)
+#
+#  rv32i:     A boolean. If true, this instruction came from the RV32I ISA.
+#             Optional, defaults to false.
+#
+#  synopsis:  A longer name for this instruction. If set, used as a subtitle in
+#             the generated documentation. (optional)
+#
+#  operands:  A list of operand names. These have a special syntax, described
+#             below. (required)
+#
+#  syntax:    The syntax for the operands to the instruction. If not given,
+#             this is assumed to be the operands in order, separated by commas.
+#             If given, it should be a string with operand names in angle
+#             brackets ("<foo>, <bar>"). Any other non-whitespace characters
+#             are taken to be required literal syntax. So "foo<bar>" means "the
+#             string 'foo', followed by the bar operand".
+#
+#  doc:       Documentation for the instruction in markdown. (optional)
+#
+#  decode:    Python pseudocode for decoding instruction objects (optional)
+#
+#  operation: Python pseudocode for the operation of the instruction (optional)
+#
+#  note:      Text that should appear in a callout banner at the top of the
+#             instruction documentation. (optional)
+#
+#  glued-ops: A boolean. If true, the first operand in the syntax can appear
+#             immediately after the mnemonic (with no space). Optional,
+#             defaults to false.
+#
+#  trailing-doc: Documentation that should appear after the syntax example but
+#                before the operand table. Useful for things like alternative
+#                assembly syntax, or deviations from the usual meaning of the
+#                instruction. (optional)
+#
+#  literal-pseudo-op: This instruction is a pseudo-operation that expands into
+#                     a list of underlying RISC-V operations, given as a list.
+#                     Optional. Can't be specified with encoding or
+#                     python-pseudo-op.
+#
+#  python-pseudo-op: A boolean. If true then this instruction is a
+#                    pseudo-operation but is complicated to describe. The
+#                    assembler has some hardcoded logic to deal with it.
+#                    Optional, default false. Can't be true if encoding or
+#                    literal-pseudo-op is specified.
+#
+#  lsu:       An optional dictionary. If set, this is an LSU operation,
+#             described by the fields of the dictionary (defined below).
+#
+#  straight-line: A boolean. If true, this instruction has no effect on control
+#                 flow. Optional, default true.
+#
+#  cycles:    A positive integer, giving the number of cycles that the
+#             instruction takes to execute. Optional, default 1.
+#
+# The operands field should be a list, corresponding to the operands in the
+# order they will appear in the syntax. Each operand is either a string (the
+# operand name) or a dictionary. In the latter case, it has the following
+# fields:
+#
+#  name:      The name of the operand. Required and must be unique.
+#
+#  abbrev:    An optional shortened name for the operand. If given, it
+#             must not match the short name or full name of any other
+#             operand.
+#
+#  type:      The type of the operand. A string. If this can be figured out
+#             from the operand name, it is optional. See below for a list of
+#             possible operand types and the rules for recognising them
+#             automatically.
+#
+#  doc:       A fragment of markdown that documents the operand
+#
+#  pc-rel:    Only valid for immediate operands. If true, this operand is
+#             encoded relative to the current PC. Optional boolean,
+#             defaults to false.
+#
+# The valid operand types are as follows:
+#
+#  gpr:       The name of a general purpose register. Syntax "grs" for a
+#             source; "grd" for a destination.
+#
+#  wdr:       The name of a wide register. Syntax "wrs" for a source;
+#             "wrd" for a destination.
+#
+#  csr:       The name of a CSR. Syntax "csr" (always considered a destination)
+#
+#  wsr:       The name of a WSR. Syntax "wsr" (always considered a destination)
+#
+#  simm:      A signed immediate operand. The full syntax is simm12<<3 to mean
+#             a signed immediate of width 12 which must be divisible by 2**3
+#             and is encoded by shifting right by 3. If there is no shift, the
+#             syntax simm12 is the same as simm12<<0. Similarly, if there is no
+#             known width (which should be inferred from any encoding scheme),
+#             it can be written as just simm or simm<<3.
+#
+#  uimm:      An unsigned immediate operand. Syntax as with simm, but starting
+#             with "uimm".
+#
+#  enum:      An immediate with weird syntax. The syntax is "enum(a,b,c,d)"
+#             where a..d are the different possible syntaxes that can be used.
+#             The values are interpreted as immediates in enumeration order (so
+#             a is 0; d is 3).
+#
+#  option:    A 1-bit immediate with weird syntax. Written "option(foo)" to
+#             mean that if the string "foo" appears then the immediate has
+#             value 1 and if it doesn't the immediate has value 0.
+#
+# Operand types are inferred from names as follows:
+#
+#  grd:        GPR destination
+#  grs, grs<n> GPR source
+#  wrd:        WDR destination
+#  wrs, wrs<n> WDR source
+#  csr         CSR name
+#  wsr         WSR name
+#  imm, imm<n> Signed immediate (width <n> if specified)
+#  offset      Signed immediate (unspecified width)
+#
+# If specified, the lsu field for an instruction should be a dictionary with
+# the following fields:
+#
+#  type:    A string. "mem-load", "mem-store", "wsr-load", "wsr-store" or "csr"
+#
+#  target:  A string or list of strings, which should be operand names. If a
+#           single string, this means that the named operand contains the
+#           target address. If the operand is an immediate, it is the target
+#           address. If the operand is a register, the value it contains is the
+#           target address. For a list of strings, the associated values are
+#           summed.
+#
+#  bytes:   An integer giving the width of the operation in bytes. This is
+#           required if type is mem-* and cannot be used otherwise.
+
+insn-groups:
+  - key: base
+    title: Base Instruction Subset
+    doc: |
+      The base instruction set of OTBN is a limited 32b instruction set.
+      It is used together with the 32b wide General Purpose Register file.
+      The primary use of the base instruction set is the control flow in applications.
+
+      The base instruction set is an extended subset of [RISC-V's RV32I_Zcsr](https://riscv.org/specifications/isa-spec-pdf/).
+      Refer to the [RISC-V Unprivileged Specification](https://riscv.org/specifications/isa-spec-pdf/) for a detailed instruction specification.
+      Not all RV32 instructions are implemented.
+      The implemented subset is shown below.
+    insns: base-insns.yml
+
+  - key: bignum
+    title: Big Number Instruction Subset
+    doc: |
+      All Big Number (BN) instructions operate on the Wide Data Registers (WDRs).
+    insns: bignum-insns.yml
