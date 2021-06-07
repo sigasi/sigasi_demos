@@ -1,0 +1,71 @@
+// Copyright lowRISC contributors.
+// Licensed under the Apache License, Version 2.0, see LICENSE for details.
+// SPDX-License-Identifier: Apache-2.0
+{
+  name: "edn"
+  import_testplans: ["hw/dv/tools/dvsim/testplans/csr_testplan.hjson",
+                     "hw/dv/tools/dvsim/testplans/intr_test_testplan.hjson",
+                     "hw/dv/tools/dvsim/testplans/tl_device_access_types_testplan.hjson",
+                     "hw/dv/tools/dvsim/testplans/stress_all_with_reset_testplan.hjson"]
+  entries: [
+    {
+      name: smoke
+      desc: '''
+            Smoke test acessing a major datapath within the edn.
+
+            **Stimulus**:
+            - TBD
+
+            **Checks**:
+            - TBD
+            '''
+      milestone: V1
+      tests: ["edn_smoke"]
+    }
+    {
+      name: firmware
+      desc: '''
+            Verify regen bit enables/disables write access to control registers
+            Verify firmware generate command causes entropy to be distributed to hw agents.
+            Verify cmd_fifo_reset bit causes fifos to reset.
+            '''
+      milestone: V2
+      tests: []
+    }
+    {
+      name: csrng_cmd
+      desc: '''
+            Verify endpoint agent reqs generate csrng commands as predicted.
+            Verify auto-generate mode behaves as predicted.
+            Verify max_num_reqs_between_reseeds in auto-generate mode.
+            Verify boot-time request mode behaves as predicted.
+            '''
+      milestone: V2
+      tests: []
+    }
+    {
+      name: genbits
+      desc: '''
+            Verify genbits input is transferred to endpoint as predicted.
+            Verify fips bit(s) are properly transferred to endpoint.
+            '''
+      milestone: V2
+      tests: []
+    }
+    {
+      name: interrupts
+      desc: '''
+            Verify all edn interrupts assert/clear when expected.
+            '''
+      milestone: V2
+      tests: []
+    }
+    {
+      name: stress_all
+      desc: '''
+            Combine the other individual testpoints while injecting TL errors and running CSR tests in parallel.'''
+      milestone: V2
+      tests: ["csrng_stress_all"]
+    }
+  ]
+}

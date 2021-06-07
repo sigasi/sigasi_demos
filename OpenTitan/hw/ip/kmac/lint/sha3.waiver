@@ -1,0 +1,17 @@
+# Copyright lowRISC contributors.
+# Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# SPDX-License-Identifier: Apache-2.0
+#
+# waiver file for SHA3
+
+#waive -rules {} -location {} -regexp {} -comment ""
+
+waive -rules {CLOCK_USE} -location {keccak_round.sv} -regexp {clk_i' is connected to 'keccak_2share' port} \
+      -comment "In EnMasking = 0, no clock is used in keccak round module"
+
+waive -rules {RESET_USE} -location {keccak_round.sv} -regexp {'rst_ni' is connected to} \
+      -comment "No reset is used if EnMasking = 0. connected to unused_* signal"
+
+waive -rules {TWO_STATE_TYPE} -location {keccak_2share.sv} \
+      -regexp {'index_z' is of two state} \
+      -comment "index_z behaves as constant"

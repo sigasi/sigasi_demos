@@ -1,0 +1,281 @@
+// Copyright lowRISC contributors.
+// Licensed under the Apache License, Version 2.0, see LICENSE for details.
+// SPDX-License-Identifier: Apache-2.0
+{
+
+  // This is the primary cfg hjson for FPV. It imports ALL individual FPV
+  // cfgs of the IPs and the full chip used in top_earlgrey. This enables to run
+  // them all as a regression in one shot.
+  name: top_earlgrey_batch_fpv
+
+  import_cfgs: [// common server configuration for results upload
+                "{proj_root}/hw/data/common_project_cfg.hjson"]
+
+  flow: "fpv"
+
+  use_cfgs: [// TODO: implement some switch to only select "_fpv" testbenches
+             // TODO: if we default "_fpv" cov to be on, and the rest of the tbs cov off, need a
+             // command-line switch to disable cov.
+             {
+               name: prim_arbiter_ppc_fpv
+               fusesoc_core: lowrisc:fpv:prim_arbiter_ppc_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_arbiter_tree_fpv
+               fusesoc_core: lowrisc:fpv:prim_arbiter_tree_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_arbiter_fixed_fpv
+               fusesoc_core: lowrisc:fpv:prim_arbiter_fixed_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_lfsr_fpv
+               fusesoc_core: lowrisc:fpv:prim_lfsr_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_fifo_sync_fpv
+               fusesoc_core: lowrisc:fpv:prim_fifo_sync_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_alert_rxtx_fpv
+               fusesoc_core: lowrisc:fpv:prim_alert_rxtx_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_alert_rxtx_fatal_fpv
+               fusesoc_core: lowrisc:fpv:prim_alert_rxtx_fatal_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_alert_rxtx_async_fpv
+               fusesoc_core: lowrisc:fpv:prim_alert_rxtx_async_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_alert_rxtx_async_fatal_fpv
+               fusesoc_core: lowrisc:fpv:prim_alert_rxtx_async_fatal_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_esc_rxtx_fpv
+               fusesoc_core: lowrisc:fpv:prim_esc_rxtx_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_packer_fpv
+               fusesoc_core: lowrisc:fpv:prim_packer_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_secded_22_16_fpv
+               fusesoc_core: lowrisc:fpv:prim_secded_22_16_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_secded_28_22_fpv
+               fusesoc_core: lowrisc:fpv:prim_secded_28_22_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_secded_39_32_fpv
+               fusesoc_core: lowrisc:fpv:prim_secded_39_32_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_secded_72_64_fpv
+               fusesoc_core: lowrisc:fpv:prim_secded_72_64_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_secded_hamming_22_16_fpv
+               fusesoc_core: lowrisc:fpv:prim_secded_hamming_22_16_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_secded_hamming_39_32_fpv
+               fusesoc_core: lowrisc:fpv:prim_secded_hamming_39_32_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: prim_secded_hamming_72_64_fpv
+               fusesoc_core: lowrisc:fpv:prim_secded_hamming_72_64_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: pinmux_fpv
+               fusesoc_core: lowrisc:fpv:pinmux_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: rv_plic_fpv
+               fusesoc_core: lowrisc:fpv:rv_plic_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: rv_plic_generic_fpv
+               fusesoc_core: lowrisc:fpv:rv_plic_generic_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             {
+               name: sha3pad_fpv
+               fusesoc_core: lowrisc:fpv:sha3pad_fpv
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: true
+             }
+             // Below are IPs that already has a DV testbench,
+             // FPV only verifies TLUL interface and build-in assertions,
+             // so will not collect FPV coverage.
+             {
+               name: aes
+               fusesoc_core: lowrisc:dv:aes_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: alert_handler
+               fusesoc_core: lowrisc:dv:alert_handler_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: csrng
+               fusesoc_core: lowrisc:dv:csrng_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: edn
+               fusesoc_core: lowrisc:dv:edn_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: entropy_src
+               fusesoc_core: lowrisc:dv:entropy_src_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: flash_ctrl
+               fusesoc_core: lowrisc:dv:flash_ctrl_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: gpio
+               fusesoc_core: lowrisc:dv:gpio_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: hmac
+               fusesoc_core: lowrisc:dv:hmac_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: i2c
+               fusesoc_core: lowrisc:dv:i2c_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: pattgen
+               fusesoc_core: lowrisc:dv:pattgen_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: keymgr
+               fusesoc_core: lowrisc:dv:keymgr_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: lc_ctrl
+               fusesoc_core: lowrisc:dv:lc_ctrl_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: otp_ctrl
+               fusesoc_core: lowrisc:dv:otp_ctrl_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: otbn
+               fusesoc_core: lowrisc:dv:otbn_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: rv_dm
+               fusesoc_core: lowrisc:dv:rv_dm_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: rv_timer
+               fusesoc_core: lowrisc:dv:rv_timer_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: spi_device
+               fusesoc_core: lowrisc:dv:spi_device_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: sram_ctrl
+               fusesoc_core: lowrisc:dv:sram_ctrl_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: uart
+               fusesoc_core: lowrisc:dv:uart_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: usbdev
+               fusesoc_core: lowrisc:dv:usbdev_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+             {
+               name: usbuart
+               fusesoc_core: lowrisc:dv:usbuart_sva
+               import_cfgs: ["{proj_root}/hw/formal/tools/dvsim/common_fpv_cfg.hjson"]
+               cov: false
+             }
+            ]
+}

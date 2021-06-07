@@ -1,0 +1,29 @@
+CAPI=2:
+# Copyright lowRISC contributors.
+# Licensed under the Apache License, Version 2.0, see LICENSE for details.
+# SPDX-License-Identifier: Apache-2.0
+name: "lowrisc:systems:clkmgr:0.1"
+description: "Top specific clock manager "
+
+filesets:
+  files_rtl:
+    depend:
+      - lowrisc:ip:tlul
+      - lowrisc:prim:all
+      - lowrisc:prim:clock_gating
+      - lowrisc:prim:clock_buf
+      - lowrisc:prim:clock_div
+      - lowrisc:ip:lc_ctrl_pkg
+      - lowrisc:prim:lc_sync
+      - lowrisc:ip:pwrmgr_pkg
+      - lowrisc:systems:clkmgr_pkg
+    files:
+      - rtl/autogen/clkmgr_reg_pkg.sv
+      - rtl/autogen/clkmgr_reg_top.sv
+      - rtl/autogen/clkmgr.sv
+    file_type: systemVerilogSource
+
+targets:
+  default: &default_target
+    filesets:
+      - files_rtl

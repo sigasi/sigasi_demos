@@ -1,0 +1,717 @@
+// Copyright lowRISC contributors.
+// Licensed under the Apache License, Version 2.0, see LICENSE for details.
+// SPDX-License-Identifier: Apache-2.0
+{ name: "lc_ctrl",
+  clock_primary: "clk_i",
+  bus_device: "tlul",
+  bus_host: "none",
+  scan: "true", // Enable `scanmode_i` port
+  regwidth: "32",
+
+
+  ///////////////////////////
+  // Interrupts and Alerts //
+  ///////////////////////////
+
+  alert_list: [
+    { name: "fatal_prog_error",
+      desc: "This alert triggers if an error occurred during an OTP programming operation.",
+    }
+    { name: "fatal_state_error",
+      desc: "This alert triggers if an error in the life cycle state or life cycle controller FSM is detected.",
+    }
+  ],
+
+  ////////////////
+  // Parameters //
+  ////////////////
+
+  param_list: [
+    // Random netlist constants
+    { name:      "RndCnstLcKeymgrDivInvalid",
+      desc:      "Compile-time random bits for lc state group diversification value",
+      type:      "lc_ctrl_pkg::lc_keymgr_div_t",
+      randcount: "64",
+      randtype:  "data",
+    }
+    { name:      "RndCnstLcKeymgrDivTestDevRma",
+      desc:      "Compile-time random bits for lc state group diversification value",
+      type:      "lc_ctrl_pkg::lc_keymgr_div_t",
+      randcount: "64",
+      randtype:  "data",
+    }
+    { name:      "RndCnstLcKeymgrDivProduction",
+      desc:      "Compile-time random bits for lc state group diversification value",
+      type:      "lc_ctrl_pkg::lc_keymgr_div_t",
+      randcount: "64",
+      randtype:  "data",
+    }
+    // Regular parameters
+    { name:    "NumTokenWords",
+      desc:    "Number of 32bit words in a token.",
+      type:    "int"
+      default: "4",
+      local:   "true"
+    }
+    { name:    "CsrLcStateWidth",
+      desc:    "Number of life cycle state enum bits.",
+      type:    "int"
+      default: "4",
+      local:   "true"
+    }
+    { name:    "CsrLcCountWidth",
+      desc:    "Number of life cycle transition counter bits.",
+      type:    "int"
+      default: "5",
+      local:   "true"
+    }
+    { name:    "CsrLcIdStateWidth",
+      desc:    "Number of life cycle id state enum bits.",
+      type:    "int"
+      default: "2",
+      local:   "true"
+    }
+    { name:    "NumDeviceIdWords",
+      desc:    "Number of 32bit words in the Device ID.",
+      type:    "int"
+      default: "8",
+      local:   "true"
+    }
+  ]
+
+  /////////////////////////////
+  // Intermodule Connections //
+  /////////////////////////////
+
+  inter_signal_list: [
+    // life cycle JTAG TAP
+    { struct:  "jtag"
+      type:    "req_rsp"
+      name:    "jtag"
+      act:     "rsp"
+      package: "jtag_pkg"
+    }
+    // Escalation inputs from alert handler
+    { struct:  "esc_tx"
+      type:    "uni"
+      name:    "esc_wipe_secrets_tx"
+      act:     "rcv"
+      package: "prim_esc_pkg"
+    }
+    { struct:  "esc_rx"
+      type:    "uni"
+      name:    "esc_wipe_secrets_rx"
+      act:     "req"
+      package: "prim_esc_pkg"
+    }
+    { struct:  "esc_tx"
+      type:    "uni"
+      name:    "esc_scrap_state_tx"
+      act:     "rcv"
+      package: "prim_esc_pkg"
+    }
+    { struct:  "esc_rx"
+      type:    "uni"
+      name:    "esc_scrap_state_rx"
+      act:     "req"
+      package: "prim_esc_pkg"
+    }
+    // Init request from power manager
+    { struct:  "pwr_lc",
+      type:    "req_rsp",
+      name:    "pwr_lc",
+      act:     "rsp",
+      package: "pwrmgr_pkg",
+    },
+    // life cycle state broadcast from OTP
+    { struct:  "otp_lc_data"
+      type:    "uni"
+      name:    "otp_lc_data"
+      act:     "rcv"
+      default: "otp_ctrl_pkg::OTP_LC_DATA_DEFAULT"
+      package: "otp_ctrl_pkg"
+    }
+    // life cycle transition command to OTP
+    { struct:  "lc_otp_program"
+      type:    "req_rsp"
+      name:    "lc_otp_program"
+      act:     "req"
+      default: "'0"
+      package: "otp_ctrl_pkg"
+    }
+    // life cycle token hashing command to OTP
+    { struct:  "lc_otp_token"
+      type:    "req_rsp"
+      name:    "lc_otp_token"
+      act:     "req"
+      default: "'0"
+      package: "otp_ctrl_pkg"
+    }
+    // Life cycle broadcast signals
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_dft_en"
+      act:     "req"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_nvm_debug_en"
+      act:     "req"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_hw_debug_en"
+      act:     "req"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_cpu_en"
+      act:     "req"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_keymgr_en"
+      act:     "req"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_escalate_en"
+      act:     "req"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_clk_byp_req"
+      act:     "req"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_clk_byp_ack"
+      act:     "rcv"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_flash_rma_req"
+      act:     "req"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_flash_rma_seed"
+      type:    "uni"
+      name:    "lc_flash_rma_seed"
+      act:     "req"
+      default: "'0"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_flash_rma_ack"
+      act:     "rcv"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_check_byp_en"
+      act:     "req"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_creator_seed_sw_rw_en"
+      act:     "req"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_owner_seed_sw_rw_en"
+      act:     "req"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_iso_part_sw_rd_en"
+      act:     "req"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_iso_part_sw_wr_en"
+      act:     "req"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    { struct:  "lc_tx"
+      type:    "uni"
+      name:    "lc_seed_hw_rd_en"
+      act:     "req"
+      default: "lc_ctrl_pkg::Off"
+      package: "lc_ctrl_pkg"
+    }
+    // LC state diversification value for keymgr
+    { struct:  "lc_keymgr_div"
+      type:    "uni"
+      name:    "lc_keymgr_div"
+      act:     "req"
+      default: "'0"
+      package: "lc_ctrl_pkg"
+    }
+    // HW config input for DEVICE_ID
+    { struct:  "otp_hw_cfg"
+      type:    "uni"
+      name:    "otp_hw_cfg"
+      act:     "rcv"
+      default: "'0"
+      package: "otp_ctrl_part_pkg"
+    }
+  ] // inter_signal_list
+
+  registers: [
+
+    ////////////////
+    // Status CSR //
+    ////////////////
+
+    { name: "STATUS",
+      desc: "life cycle status register. Note that all errors are terminal and require a reset cycle.",
+      swaccess: "ro",
+      hwaccess: "hwo",
+      hwext:    "true",
+      tags: [ // Life cycle internal HW will update status so could not auto-predict its value,
+              // After reset, the field READY will be set to 1, so it is excluded from reset CSR test
+              "excl:CsrAllTests:CsrExclCheck"],
+      fields: [
+        { bits: "0"
+          name: "READY"
+          desc: '''
+                This bit is set to 1 if the life cycle controller has successfully initialized and the
+                state exposed in !!LC_STATE and !!LC_TRANSITION_CNT is valid.
+                '''
+        }
+        { bits: "1"
+          name: "TRANSITION_SUCCESSFUL"
+          desc: '''
+                This bit is set to 1 if the last life cycle transition request was successful.
+                Note that each transition attempt increments the !!LC_TRANSITION_CNT and
+                moves the life cycle state into POST_TRANSITION.
+                '''
+        }
+        { bits: "2"
+          name: "TRANSITION_COUNT_ERROR"
+          desc: '''
+                This bit is set to 1 if the !!LC_TRANSITION_CNT has reached its maximum.
+                If this is the case, no more state transitions can be performed.
+                Note that each transition attempt increments the !!LC_TRANSITION_CNT and
+                moves the life cycle state into POST_TRANSITION.
+                '''
+        }
+        { bits: "3"
+          name: "TRANSITION_ERROR"
+          desc: '''
+                This bit is set to 1 if the last transition command requested an invalid state transition
+                (e.g. DEV -> RAW). Note that each transition attempt increments the !!LC_TRANSITION_CNT and
+                moves the life cycle state into POST_TRANSITION.
+                '''
+        }
+        { bits: "4"
+          name: "TOKEN_ERROR"
+          desc: '''
+                This bit is set to 1 if the token supplied for a conditional transition was invalid.
+                Note that each transition attempt increments the !!LC_TRANSITION_CNT and
+                moves the life cycle state into POST_TRANSITION.
+                '''
+        }
+        { bits: "5"
+          name: "FLASH_RMA_ERROR"
+          desc: '''
+                This bit is set to 1 if flash failed to correctly respond to an RMA request.
+                Note that each transition attempt increments the !!LC_TRANSITION_CNT and
+                moves the life cycle state into POST_TRANSITION.
+                '''
+        }
+        { bits: "6"
+          name: "OTP_ERROR"
+          desc: '''
+                This bit is set to 1 if an error occurred during an OTP programming operation.
+                This error will move the life cycle state automatically to ESCALATE and raise a
+                fatal_prog_error alert.
+                '''
+        }
+        { bits: "7"
+          name: "STATE_ERROR"
+          desc: '''
+                This bit is set to 1 if either the controller FSM state or the life cycle state is invalid or
+                has been corrupted as part of a tampering attempt. This error will move the life cycle state
+                automatically to ESCALATE and raise a fatal_state_error alert.
+                '''
+        }
+        { bits: "8"
+          name: "OTP_PARTITION_ERROR"
+          desc: '''
+                This bit is set to 1 if the life cycle partition in OTP is in error state.
+                This bit is intended for production testing during the RAW life cycle state,
+                where the OTP control and status registers are not accessible.
+                This error does not trigger an alert in the life cycle controller.
+                '''
+        }
+      ]
+    }
+
+    /////////////////////////
+    // Transition CMD CSRs //
+    /////////////////////////
+
+    { name: "CLAIM_TRANSITION_IF",
+      desc: "Hardware mutex to claim exclusive access to the transition interface.",
+      swaccess: "rw",
+      hwaccess: "hrw",
+      hwqe:     "true",
+      hwext:    "true",
+      tags: [ // this register is only writable if the mutex has not been claimed already.
+              "excl:CsrNonInitTests:CsrExclCheck"],
+      fields: [
+        { bits: "7:0",
+          name: "MUTEX",
+          desc: '''
+          In order to have exclusive access to the transition interface, SW must first claim the associated
+          hardware mutex by writing 0xA5 to this register.
+          If the register reads back 0xA5, the mutex claim has been successful, and !!TRANSITION_REGWEN
+          will be set automatically to 1 by HW.
+          Write 0 to this register in order to release the HW mutex.
+          '''
+        }
+      ]
+    }
+    { name: "TRANSITION_REGWEN",
+      desc: '''
+            Register write enable for all transition interface registers.
+            ''',
+      swaccess: "ro",
+      hwaccess: "hwo",
+      hwext:    "true",
+      tags: [ // life cycle internal HW will set this enable register to 0 when the hardware mutex has not been claimed or
+              // when the life cycle controller is busy and not ready to accept a transition command.
+              "excl:CsrNonInitTests:CsrExclCheck"],
+      fields: [
+        {
+            bits:   "0",
+            desc: '''
+            This bit is hardware-managed and only readable by software.
+            By default, this bit is set to 0 by hardware.
+            Once SW has claimed the !!CLAIM_TRANSITION_IF mutex, this bit will be set to 1.
+            Note that the life cycle controller sets this bit temporarily to 0 while executing a life cycle state
+            transition.
+            '''
+            resval: 0,
+        },
+      ]
+    },
+    { name: "TRANSITION_CMD",
+      desc: "Command register for state transition requests.",
+      swaccess: "r0w1c",
+      hwaccess: "hro",
+      hwqe:     "true",
+      hwext:    "true",
+      regwen:   "TRANSITION_REGWEN",
+      tags: [ // Write to TRANSITION_CMD randomly might cause invalid transition errors
+              "excl:CsrNonInitTests:CsrExclWrite"],
+      fields: [
+        { bits: "0",
+          name: "START",
+          desc: '''
+          Writing a 1 to this register initiates the life cycle state transition to the state
+          specified in !!TRANSITION_TARGET.
+          Note that not all transitions are possible, and certain conditional transitions require
+          an additional !!TRANSITION_TOKEN_0.
+          In order to have exclusive access to this register, SW must first claim the associated
+          hardware mutex via !!CLAIM_TRANSITION_IF.
+          '''
+        }
+      ]
+    }
+    { multireg: {
+        name:     "TRANSITION_TOKEN",
+        desc:     '''
+                  128bit token for conditional transitions.
+                  Make sure to set this to 0 for unconditional transitions.
+                  Note that this register is shared with the life cycle TAP interface.
+                  In order to have exclusive access to this register, SW must first claim the associated
+                  hardware mutex via !!CLAIM_TRANSITION_IF.
+                  ''',
+        count:    "NumTokenWords", // 4 x 32bit = 128bit
+        swaccess: "rw",
+        hwaccess: "hrw",
+        hwqe:     "true",
+        hwext:    "true",
+        regwen:   "TRANSITION_REGWEN",
+        cname:    "WORD",
+        tags: [ // To update this register, SW needs to claim the associated hardware mutex via
+                // CLAIM_TRANSITION_IF, so could not auto predict its value.
+                "excl:CsrNonInitTests:CsrExclCheck"],
+        fields: [
+          { bits: "31:0"
+          }
+        ]
+      }
+    },
+    { name: "TRANSITION_TARGET",
+      desc: "This register exposes the decoded life cycle state.",
+      swaccess: "rw",
+      hwaccess: "hrw",
+      hwqe:     "true",
+      hwext:    "true",
+      regwen:   "TRANSITION_REGWEN",
+      fields: [
+        { bits: "CsrLcStateWidth-1:0"
+          name: "STATE"
+          desc: '''
+                Note that this register is shared with the life cycle TAP interface.
+                In order to have exclusive access to this register, SW must first claim the associated
+                hardware mutex via !!CLAIM_TRANSITION_IF.
+                '''
+          tags: [ // To update this register, SW needs to claim the associated hardware mutex via
+                  // CLAIM_TRANSITION_IF, so could not auto predict its value.
+                  "excl:CsrNonInitTests:CsrExclCheck"],
+          enum: [
+            { value: "0",
+              name:  "RAW",
+              desc:  "Raw life cycle state after fabrication where all functions are disabled."
+            }
+            { value: "1",
+              name:  "TEST_UNLOCKED0",
+              desc:  "Unlocked test state where debug functions are enabled."
+            }
+            { value: "2",
+              name:  "TEST_LOCKED0",
+              desc:  "Locked test state where where all functions are disabled."
+            }
+            { value: "3",
+              name:  "TEST_UNLOCKED1",
+              desc:  "Unlocked test state where debug functions are enabled."
+            }
+            { value: "4",
+              name:  "TEST_LOCKED1",
+              desc:  "Locked test state where where all functions are disabled."
+            }
+            { value: "5",
+              name:  "TEST_UNLOCKED2",
+              desc:  "Unlocked test state where debug functions are enabled."
+            }
+            { value: "6",
+              name:  "TEST_LOCKED2",
+              desc:  "Locked test state where debug all functions are disabled."
+            }
+            { value: "7",
+              name:  "TEST_UNLOCKED3",
+              desc:  "Unlocked test state where debug functions are enabled."
+            }
+            { value: "8",
+              name:  "DEV",
+              desc:  "Development life cycle state where limited debug functionality is available."
+            }
+            { value: "9",
+              name:  "PROD",
+              desc:  "Production life cycle state."
+            }
+            { value: "10",
+              name:  "PROD_END",
+              desc:  "Production life cycle state."
+            }
+            { value: "11",
+              name:  "RMA",
+              desc:  "RMA life cycle state."
+            }
+            { value: "12",
+              name:  "SCRAP",
+              desc:  "SCRAP life cycle state where all functions are disabled."
+            }
+          ]
+        }
+      ]
+    }
+
+    //////////////////
+    // LC State CSR //
+    //////////////////
+
+    { name: "LC_STATE",
+      desc: "This register exposes the decoded life cycle state.",
+      swaccess: "ro",
+      hwaccess: "hwo",
+      hwext:    "true",
+      fields: [
+        { bits: "CsrLcStateWidth-1:0"
+          name: "STATE"
+          desc: ""
+          enum: [
+            { value: "0",
+              name:  "RAW",
+              desc:  "Raw life cycle state after fabrication where all functions are disabled."
+            }
+            { value: "1",
+              name:  "TEST_UNLOCKED0",
+              desc:  "Unlocked test state where debug functions are enabled."
+            }
+            { value: "2",
+              name:  "TEST_LOCKED0",
+              desc:  "Locked test state where where all functions are disabled."
+            }
+            { value: "3",
+              name:  "TEST_UNLOCKED1",
+              desc:  "Unlocked test state where debug functions are enabled."
+            }
+            { value: "4",
+              name:  "TEST_LOCKED1",
+              desc:  "Locked test state where where all functions are disabled."
+            }
+            { value: "5",
+              name:  "TEST_UNLOCKED2",
+              desc:  "Unlocked test state where debug functions are enabled."
+            }
+            { value: "6",
+              name:  "TEST_LOCKED2",
+              desc:  "Locked test state where debug all functions are disabled."
+            }
+            { value: "7",
+              name:  "TEST_UNLOCKED3",
+              desc:  "Unlocked test state where debug functions are enabled."
+            }
+            { value: "8",
+              name:  "DEV",
+              desc:  "Development life cycle state where limited debug functionality is available."
+            }
+            { value: "9",
+              name:  "PROD",
+              desc:  "Production life cycle state."
+            }
+            { value: "10",
+              name:  "PROD_END",
+              desc:  "Same as PROD, but transition into RMA is not possible from this state."
+            }
+            { value: "11",
+              name:  "RMA",
+              desc:  "RMA life cycle state."
+            }
+            { value: "12",
+              name:  "SCRAP",
+              desc:  "SCRAP life cycle state where all functions are disabled."
+            }
+            // The following states are temporary.
+            { value: "13",
+              name:  "POST_TRANSITION",
+              desc:  "This state is temporary and behaves the same way as SCRAP."
+            }
+            { value: "14",
+              name:  "ESCALATE",
+              desc:  "This state is temporary and behaves the same way as SCRAP."
+            }
+            { value: "15",
+              name:  "INVALID",
+              desc:   '''
+                      This state is reported when the life cycle state encoding is invalid.
+                      This state is temporary and behaves the same way as SCRAP.
+                      '''
+            }
+          ]
+        }
+      ],
+      tags: [ // This value is driven by hardware.
+        "excl:CsrNonInitTests:CsrExclCheck"],
+    }
+
+    { name: "LC_TRANSITION_CNT",
+      desc: "This register exposes the state of the decoded life cycle transition counter.",
+      swaccess: "ro",
+      hwaccess: "hwo",
+      hwext:    "true",
+      fields: [
+        { bits: "CsrLcCountWidth-1:0"
+          name: "CNT"
+          desc: '''
+          Number of total life cycle state transition attempts.
+          The life cycle controller allows up to 16 transition attempts.
+          If this counter is equal to 16, the !!LC_STATE is considered
+          to be invalid and will read as SCRAP.
+
+          If the counter state is invalid, the counter will have the
+          value 31 (i.e., all counter bits will be set).
+          '''
+        }
+      ],
+      tags: [ // This value is driven by hardware.
+        "excl:CsrNonInitTests:CsrExclCheck"],
+    }
+
+    { name: "LC_ID_STATE",
+      desc: "This register exposes the id state of the device.",
+      swaccess: "ro",
+      hwaccess: "hwo",
+      hwext:    "true",
+      fields: [
+        { bits: "1:0"
+          name: "STATE"
+          desc: ""
+          enum: [
+            { value: "0",
+              name:  "BLANK",
+              desc:  "The device has not yet been personalized."
+            }
+            { value: "1",
+              name:  "PERSONALIZED",
+              desc:  "The device has been personalized."
+            }
+            { value: "2",
+              name:  "INVALID",
+              desc:  "The state is not valid."
+            }
+          ]
+        }
+      ],
+      tags: [ // This value is driven by hardware.
+        "excl:CsrNonInitTests:CsrExclCheck"],
+    }
+
+    ///////////////
+    // Device ID //
+    ///////////////
+    { multireg: {
+        name:     "DEVICE_ID",
+        desc:     '''
+                  This is the 256bit DEVICE_ID value that is stored in the HW_CFG partition in OTP.
+                  If this register reads all-one, the HW_CFG partition has not been initialized yet or is in error state.
+                  If this register reads all-zero, this is indicative that the value has not been programmed to OTP yet.
+                  '''
+        count:    "NumDeviceIdWords", // 8 x 32bit = 256bit
+        swaccess: "ro",
+        hwaccess: "hwo",
+        hwext:    "true",
+        cname:    "WORD",
+        tags: [ // This value is driven by hardware.
+                "excl:CsrNonInitTests:CsrExclCheck"],
+        fields: [
+          { bits: "31:0"
+          }
+        ]
+      }
+    }
+  ]
+}

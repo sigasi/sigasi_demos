@@ -1,0 +1,256 @@
+// Copyright lowRISC contributors.
+// Licensed under the Apache License, Version 2.0, see LICENSE for details.
+// SPDX-License-Identifier: Apache-2.0
+{
+  // Name of the sim cfg - typically same as the name of the DUT.
+  name: chip
+
+  // Top level dut name (sv module).
+  dut: top_earlgrey_asic
+
+  // Top level testbench name (sv module).
+  tb: tb
+
+  // Default simulator used to sign off.
+  tool: vcs
+
+  // Fusesoc core file used for building the file list.
+  fusesoc_core: lowrisc:dv:chip_sim:0.1
+
+  // Testplan hjson file.
+  testplan: "{proj_root}/hw/top_earlgrey/data/chip_testplan.hjson"
+
+  // RAL spec - used to generate the RAL model.
+  ral_spec: "{proj_root}/hw/top_earlgrey/data/top_earlgrey.hjson"
+
+  // Add additional tops for simulation.
+  sim_tops: ["xbar_main_bind",
+             "xbar_peri_bind"]
+
+  // Import additional common sim cfg files.
+  import_cfgs: [// Project wide common sim cfg file
+                "{proj_root}/hw/dv/tools/dvsim/common_sim_cfg.hjson",
+                // Common CIP test lists
+                "{proj_root}/hw/dv/tools/dvsim/tests/csr_tests.hjson",
+                "{proj_root}/hw/dv/tools/dvsim/tests/mem_tests.hjson",
+                "{proj_root}/hw/dv/tools/dvsim/tests/tl_access_tests.hjson",
+                // xbar tests
+                "{proj_root}/hw/ip/tlul/generic_dv/xbar_tests.hjson",
+                // Config files to get the correct flags for otbn_memutil and otbn_tracer
+                "{proj_root}/hw/ip/otbn/dv/memutil/otbn_memutil_sim_opts.hjson",
+                "{proj_root}/hw/ip/otbn/dv/tracer/otbn_tracer_sim_opts.hjson",
+                ]
+
+  // Override existing project defaults to supply chip-specific values.
+  overrides: [
+    // Chip level design is markedly different from our Comportable IPs (and so
+    // is our coverage goals). The coverage goals also differ between 'default'
+    // and the 'cover_reg_top' (used by common tests) builds. We override the
+    // variables below to swap the coverage cfg files used for the Comportable
+    // IPs with chip-specific ones. See `doc/ug/dv_methodology.md` for more
+    // details.
+
+    // Used by all chip level functional test. Collects coverage on the IO
+    // boundary of all pre-verified IPs and full coverage on non-pre-verified
+    // IPs. See `hw/dv/tools/dvsim/common_sim_cfg.hjson` for the default value.
+    {
+      name: default_vcs_cov_cfg_file
+      value: "-cm_hier {proj_root}/hw/top_earlgrey/dv/cov/chip_cover.cfg"
+    }
+    // Used by 'cover_reg_top' only builds - we only cover the *_reg_top of
+    // the non-pre-verified modules at the chip level. See
+    // `hw/dv/tools/dvsim//common_sim_cfg.hjson` for the default value.
+    {
+      name: cover_reg_top_vcs_cov_cfg_file
+      value: "-cm_hier {proj_root}/hw/top_earlgrey/dv/cov/chip_cover_reg_top.cfg"
+    }
+
+    // This defaults to 'ip' in `hw/data/common_project_cfg.hjson`.
+    {
+      name: design_level
+      value: "top"
+    }
+  ]
+
+  // Set the vcs_cov_assert_hier to supply the chip specific assertion coverage
+  // hierarchies.
+  vcs_cov_assert_hier: "-cm_assert_hier {proj_root}/hw/top_earlgrey/dv/cov/chip_assert_cover.cfg"
+
+  // Default iterations for all tests - each test entry can override this.
+  reseed: 1
+
+  // Default UVM test and seq class name.
+  uvm_test: chip_base_test
+  uvm_test_seq: chip_sw_base_vseq
+  sw_build_device: sim_dv
+
+  // Add build modes.
+  build_modes: [
+    {
+      name: en_ibex_tracer
+      build_opts: ["+define+RVFI=1"]
+    }
+  ]
+
+  // Add options needed to compile against otbn_memutil and otbn_tracer
+  en_build_modes: ["{tool}_otbn_memutil_build_opts",
+                   "{tool}_otbn_tracer_build_opts"]
+
+  // Add run modes.
+  run_modes: [
+    {
+      name: sw_test_mode
+      sw_images: ["sw/device/boot_rom/boot_rom:0"]
+      run_opts: ["+sw_build_bin_dir={sw_build_dir}/build-bin",
+                 "+sw_build_device={sw_build_device}",
+                 "+sw_images=\\\"{sw_images}\\\""]
+    }
+    {
+      name: stub_cpu_mode
+      run_opts: ["+stub_cpu=1"]
+    }
+    {
+      // Append stub cpu mode to csr_tests_mode, run with 20 reseeds.
+      name: csr_tests_mode
+      en_run_modes: ["stub_cpu_mode"]
+      reseed: 20
+    }
+    {
+      // Append stub cpu mode to mem_tests_mode, run with 20 reseeds.
+      name: mem_tests_mode
+      en_run_modes: ["stub_cpu_mode"]
+      reseed: 20
+    }
+    {
+      name: xbar_mode
+      run_opts: ["+xbar_mode=1"]
+      reseed: 100
+    }
+  ]
+
+  // List of test specifications.
+  //
+  // If you are adding a test that has been generated from the `sw_tests`
+  // dictionary declared in `sw/device/tests/meson.build`, the `sw_images` list
+  // below should contain `sw/device/tests/<sw_test_name>` (without any more
+  // subdirectories) because that is where the meson target is created. For
+  // example `dif_plic_smoketest` is added to `sw_tests` in
+  // `sw/device/tests/dif/meson.build`, but the final meson targets all start
+  // `sw/device/tests/dif_plic_smoketest_`.
+  //
+  // Each entry in `sw_images` is followed by an index separated with ':' which
+  // is used by the testbench to know what type of image is it:
+  // - 0 for boot_rom,
+  // - 1 for SW test,
+  // - 2 for OTBN and so on
+  // This allows an arbitrary number of SW images to be supplied to the TB.
+  tests: [
+    {
+      name: chip_uart_tx_rx
+      uvm_test_seq: chip_sw_uart_tx_rx_vseq
+      sw_images: ["sw/device/tests/uart_tx_rx_test:1"]
+      en_run_modes: ["sw_test_mode"]
+    }
+    {
+      name: chip_uart_tx_rx_bootstrap
+      uvm_test_seq: chip_sw_uart_tx_rx_vseq
+      sw_images: ["sw/device/tests/uart_tx_rx_test:1"]
+      en_run_modes: ["sw_test_mode"]
+      run_opts: ["+use_spi_load_bootstrap=1"]
+    }
+    {
+      name: chip_spi_tx_rx
+      uvm_test_seq: chip_sw_spi_tx_rx_vseq
+      sw_images: ["sw/device/tests/spi_tx_rx_test:1"]
+      en_run_modes: ["sw_test_mode"]
+    }
+    {
+      name: chip_aes_encr
+      uvm_test_seq: chip_sw_base_vseq
+      sw_images: ["sw/device/tests/aes_test:1"]
+      en_run_modes: ["sw_test_mode"]
+    }
+    {
+      name: chip_dif_gpio_smoketest
+      uvm_test_seq: chip_sw_gpio_smoke_vseq
+      sw_images: ["sw/device/tests/dif_gpio_smoketest:1"]
+      en_run_modes: ["sw_test_mode"]
+    }
+    {
+      name: chip_gpio
+      uvm_test_seq: chip_sw_gpio_vseq
+      sw_images: ["sw/device/tests/gpio_test:1"]
+      en_run_modes: ["sw_test_mode"]
+    }
+    {
+      name: chip_dif_plic_smoketest
+      uvm_test_seq: chip_sw_base_vseq
+      sw_images: ["sw/device/tests/dif_plic_smoketest:1"]
+      en_run_modes: ["sw_test_mode"]
+    }
+    {
+      name: chip_flash_ctrl_access
+      uvm_test_seq: chip_sw_base_vseq
+      sw_images: ["sw/device/tests/flash_ctrl_test:1"]
+      en_run_modes: ["sw_test_mode"]
+    }
+    {
+      name: chip_dif_otbn_smoketest
+      uvm_test_seq: chip_sw_base_vseq
+      sw_images: ["sw/device/tests/dif_otbn_smoketest:1"]
+      en_run_modes: ["sw_test_mode"]
+    }
+    {
+      name: chip_hmac_sha256_encr
+      uvm_test_seq: chip_sw_base_vseq
+      sw_images: ["sw/device/tests/sha256_test:1"]
+      en_run_modes: ["sw_test_mode"]
+    }
+    {
+      name: chip_rv_timer_irq
+      uvm_test_seq: chip_sw_base_vseq
+      sw_images: ["sw/device/tests/dif_rv_timer_smoketest:1"]
+      en_run_modes: ["sw_test_mode"]
+    }
+    {
+      name: chip_coremark
+      uvm_test_seq: chip_sw_base_vseq
+      sw_images: ["sw/device/benchmarks/coremark/coremark_top_earlgrey:1:external"]
+      en_run_modes: ["sw_test_mode"]
+      run_opts: ["+en_uart_logger=1",
+                 "+sw_test_timeout_ns=22000000"]
+    }
+    {
+      name: chip_opentitan_tock
+      uvm_test_seq: chip_sw_base_vseq
+      sw_images: ["sw/device/tock/prebuilt/opentitan:1:prebuilt:external"]
+      en_run_modes: ["sw_test_mode"]
+      run_opts: ["+en_uart_logger=1",
+                 // TODO #2241: tock reads an un-initialized part of stack,
+                 // which causes assertion errors to be thrown. This is a
+                 // temporary workaround.
+                 "+initialize_ram=1",
+                 "+sw_test_timeout_ns=50000000"]
+    }
+    {
+      name: chip_shadow_reg_errors
+      uvm_test_seq: chip_shadow_reg_errors_vseq
+      en_run_modes: ["stub_cpu_mode"]
+      run_opts: ["+en_scb=0"]
+    }
+    // The test below is added in the included tl_access_tests.hjson.
+    // We just need to append the stub_cpu_mode run mode to it.
+    {
+      name: chip_tl_errors
+      en_run_modes: ["stub_cpu_mode"]
+    }
+  ]
+
+  // List of regressions.
+  regressions: [
+    {
+      name: smoke
+      tests: ["chip_uart_tx_rx"]
+    }
+  ]
+}

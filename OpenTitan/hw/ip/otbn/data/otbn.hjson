@@ -1,0 +1,251 @@
+// Copyright lowRISC contributors.
+// Licensed under the Apache License, Version 2.0, see LICENSE for details.
+// SPDX-License-Identifier: Apache-2.0
+{ name: "otbn"
+  clock_primary: "clk_i"
+  other_clock_list: [
+    "clk_edn_i"
+  ],
+  reset_primary: "rst_ni",
+  other_reset_list: [
+    "rst_edn_ni"
+  ]
+  bus_device: "tlul"
+  bus_host: "none"
+  param_list: [
+    { name:    "RegFile",
+      type:    "otbn_pkg::regfile_e",
+      default: "otbn_pkg::RegFileFF",
+      desc:    "Selection of the register file implementation. See otbn_pkg.sv."
+      local:   "false",
+      expose:  "true"
+    }
+  ]
+  interrupt_list: [
+    { name: "done"
+      desc: "OTBN has completed the operation"
+    }
+  ]
+  alert_list: [
+    { name: "fatal"
+      desc: "A fatal error. Fatal alerts are non-recoverable and will be asserted until a hard reset."
+    }
+    { name: "recov"
+      desc: "A recoverable error. Just sent once (as the processor stops)."
+    }
+  ]
+
+  inter_signal_list: [
+    // EDN interface
+    { struct:  "edn"
+      type:    "req_rsp"
+      name:    "edn"
+      act:     "req"
+      package: "edn_pkg"
+    }
+
+    // OTBN is not performing any operation and can be clock/power-gated.
+    { name:    "idle",
+      type:    "uni",
+      struct:  "logic",
+      width:   "1",
+      act:     "req",
+    },
+  ],
+
+  regwidth: "32"
+  registers: [
+    { name: "CMD"
+      desc: "command register",
+      swaccess: "r0w1c",
+      hwaccess: "hro",
+      hwext: "true",
+      hwqe:  "true",
+      fields: [
+        { bits: "0"
+          name: "start"
+          desc: '''
+            Start the operation
+
+            The completion is signalled by the done interrupt.
+          '''
+          tags: [
+            // Don't write this field in the automated CSR tests. Doing so will
+            // start OTBN, but we won't have initialised its memory with any
+            // code, so we'll get Xs on its interfaces and everything will be
+            // a bit of a mess!
+            "excl:CsrAllTests:CsrExclWrite"
+          ]
+        }
+      ],
+    }
+    { name: "STATUS",
+      desc: "Status",
+      swaccess: "ro",
+      hwaccess: "hwo",
+      hwext: "true",
+      fields: [
+        { bits: "0",
+          name: "busy",
+          desc: "OTBN is performing an operation."
+        }
+      ]
+    } // register : status
+    { name: "ERR_BITS",
+      desc: '''
+        Error bitfield. Reads as non-zero if an error was seen during OTBN
+        operation
+      ''',
+      swaccess: "ro",
+      hwaccess: "hwo",
+      fields: [
+        { bits: "0",
+          name: "bad_data_addr"
+          desc: '''
+            A DMEM read or write occurred with an out of bounds or unaligned
+            address.
+          '''
+        }
+        { bits: "1",
+          name: "bad_insn_addr"
+          desc: '''
+            An IMEM read or write occurred with an out of bounds or unaligned
+            address.
+          '''
+        }
+        { bits: "2",
+          name: "call_stack"
+          desc: '''
+            A instruction tried to pop from an empty call stack or push to a
+            full call stack.
+          '''
+        }
+        { bits: "3",
+          name: "illegal_insn"
+          desc: '''
+            One of the following happened:
+            <ul>
+              <li>An instruction being excuted had an invalid encoding.</li>
+              <li>An access occurred for an invalid CSR or WSR.</li>
+              <li>
+                A CSR or WSR access occurred that is not permitted (e.g. writing
+                to a read-only CSR or WSR).
+              </li>
+            </ul>
+          '''
+        }
+        { bits: "4",
+          name: "loop"
+          desc: '''
+            One of the following happened:
+            <ul>
+              <li>A loop was started with an iteration count of zero.</li>
+              <li>
+                The final instruction of a loop was a branch or another loop.
+              </li>
+              <li>
+                A new loop tried to push to a full loop stack (loop nesting
+                level too deep).
+              </li>
+            </ul>
+          '''
+        }
+        { bits: "5",
+          name: "fatal_imem"
+          desc: "A fatal failure was seen on an instruction fetch."
+        }
+        { bits: "6",
+          name: "fatal_dmem"
+          desc: "A fatal failure was seen on a DMEM read."
+        }
+        { bits: "7",
+          name: "fatal_reg"
+          desc: "A fatal failure was seen on a GPR or WDR read."
+        }
+      ]
+    } // register : err_bits
+    { name: "START_ADDR",
+      desc: "Start byte address in the instruction memory",
+      swaccess: "wo",
+      hwaccess: "hro",
+      fields: [
+        { bits: "31:0",
+          name: "start_addr",
+          resval: 0,
+          desc: '''
+            Byte address in the instruction memory OTBN starts to execute from
+            when instructed to do so with the !!CMD.start .
+          '''
+        }
+      ]
+    } // register : start_addr
+    { name: "FATAL_ALERT_CAUSE",
+      desc: '''
+        The cause of a fatal alert.
+
+        The bits of this register correspond to errors that can cause a fatal
+        alert. Software can read these bits to see what went wrong. Once set,
+        these bits cannot be cleared.
+      '''
+      swaccess: "ro",
+      hwaccess: "hwo",
+      fields: [
+        { bits: "0",
+          name: "imem_error",
+          resval: 0,
+          desc: "Set on any ECC error in IMEM"
+        }
+        { bits: "1",
+          name: "dmem_error",
+          resval: 0,
+          desc: "Set on any ECC error in DMEM"
+        }
+        { bits: "2",
+          name: "reg_error",
+          resval: 0,
+          desc: "Set on any ECC error in a register file"
+        }
+      ]
+    }
+
+    // Give IMEM and DMEM 16 KiB address space, each, to allow for easy expansion
+    // of the actual IMEM and DMEM sizes without changing the address map.
+    { skipto: "0x4000" }
+
+    // Imem size (given as `items` below) must be a power of two.
+    { window: {
+        name: "IMEM"
+        items: "1024" // 4 kB
+        swaccess: "rw",
+        byte-write: "false",
+        desc: '''
+          Instruction Memory.
+
+          This register should only be accesed while OTBN is not busy, as indicated by the !!STATUS.busy flag.
+          Accesses while OTBN is busy are blocking.
+
+          TODO: The exact behavior is yet to be determined, see https://github.com/lowRISC/opentitan/issues/2696 for details.
+        '''
+      }
+    }
+
+    { skipto: "0x8000" }
+
+    // Dmem size (given as `items` below) must be a power of two.
+    { window: {
+        name: "DMEM"
+        items: "1024" // 4 kB
+        swaccess: "rw",
+        byte-write: "false",
+        desc: '''
+          Data Memory.
+
+          This register should only be accesed while OTBN is not busy, as indicated by the !!STATUS.busy flag.
+          Accesses while OTBN is busy are blocking.
+
+          TODO: The exact behavior is yet to be determined, see https://github.com/lowRISC/opentitan/issues/2696 for details.
+        '''
+      }
+    }
+  ]
+}
