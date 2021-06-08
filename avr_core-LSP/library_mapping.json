@@ -13,5 +13,10 @@
         "unisims"
       ]
     }
+  ],
+  "excludedFiles": [
+    "unisims/unisim_SMODEL.vhd",
+    "unisims/unisim_VITAL.vhd",
+    "unisims/unisim_VPKG.vhd"
   ]
 }
