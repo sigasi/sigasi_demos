@@ -1,5 +1,13 @@
 {
     "sigasi.verilog.includePaths": [
         "uvm-1.2"
-    ]
+    ],
+    "editor.semanticTokenColorCustomizations": {
+        "rules": {
+            "*.deprecated": {
+                "foreground": "#808080",
+                "italic": true
+            }
+        }
+    }
 }

@@ -168,5 +168,13 @@
         "`define RV_BTB_SIZE 32",
         "`define RV_BTB_INDEX2_LO 6",
         "`define TEC_RV_ICG clockhdr"
-    ]
+    ],
+    "editor.semanticTokenColorCustomizations": {
+        "rules": {
+            "*.deprecated": {
+                "foreground": "#808080",
+                "italic": true
+            }
+        }
+    }
 }
