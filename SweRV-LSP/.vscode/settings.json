@@ -170,11 +170,11 @@
         "`define TEC_RV_ICG clockhdr"
     ],
     "editor.semanticTokenColorCustomizations": {
-        "rules": {
-            "*.deprecated": {
-                "foreground": "#808080",
-                "italic": true
-            }
-        }
-    }
+		"rules": {
+			"*.deprecated": {
+				"foreground": "#808080",
+				"italic": true
+			}
+		}
+	}
 }
