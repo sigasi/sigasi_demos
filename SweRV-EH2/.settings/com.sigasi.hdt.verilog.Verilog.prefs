@@ -1,0 +1,3 @@
+eclipse.preferences.version=1
+includePath=configs/snapshots/default
+propertiesDefine=`define CPU_TOP eh2_swerv\n`define RV_NUM_THREADS 8\n`define RV_ICCM_BITS 19\n`define RV_DMA_BUF_DEPTH 4\n`define RV_ICCM_SADR 32'hee000000\n`define TEC_RV_ICG clockhdr\n`define RV_SB_BUS_TAG 1\n`define RV_DCCM_SADR 32'hf0040000\n`define RV_DCCM_EADR 32'hf004ffff\n`define RV_ICCM_EADR 32'hee07ffff\n`define RV_DMA_BUS_TAG 1\n`define RV_LSU_BUS_TAG 4\n`define RV_IFU_BUS_TAG 3\n

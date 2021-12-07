@@ -1,0 +1,2 @@
+https://github.com/chipsalliance/Cores-SweRV-EH2
+a95fdb81ea6dc19239cfe2953ef00710a6f1cf2a
