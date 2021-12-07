@@ -1,0 +1,3 @@
+eclipse.preferences.version=1
+includePath=configs/snapshots/default
+propertiesDefine=// example\: `define VENDOR SIGASI\n`include "common_defines.vh"

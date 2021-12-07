@@ -1,0 +1,8 @@
+configs/snapshots
+work
+obj_dir
+*.vcd
+*.csv
+*.log
+*.exe
+*.swp
