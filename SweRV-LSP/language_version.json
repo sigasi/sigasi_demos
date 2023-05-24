@@ -1,7 +1,0 @@
-{
-  "version": "0.1",
-  "languageLevel": {
-    "verilog": "SystemVerilog",
-    "vhdl": "93"
-  }
-}
